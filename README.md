@@ -7,3 +7,7 @@ A class ``Ts`` was created to handle only the sensors data required. A object mu
 ```
 string json = JsonUtility.ToJson(object);
 ```
+
+## Licenses
+
+M2Mqtt distributed as EPL 1.0 License https://github.com/eclipse/paho.mqtt.m2mqtt

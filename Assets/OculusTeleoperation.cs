@@ -56,9 +56,9 @@ public class OculusTeleoperation : MonoBehaviour {
         //> in ts <
         //PoseLeft: position {x,y,z}, orientation {x,y,z,w}
         //PoseRight: position {x,y,z}, orientation {x,y,z,w}
-        //PoseHead: position {x,y,z}, orientation {x,y,z,w
+        //PoseHead: position {x,y,z}, orientation {x,y,z,w}
         //PoseEyeLeft: position {x,y,z}, orientation {x,y,z,w}
-        //PoseEyeRight: position {x,y,z}, orientation {x,y,z,w}}
+        //PoseEyeRight: position {x,y,z}, orientation {x,y,z,w}
 
 
         //Buttons: right_index_trigger, right_hand_trigger, A, B
