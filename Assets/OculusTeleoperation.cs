@@ -51,6 +51,86 @@ public class OculusTeleoperation : MonoBehaviour {
         Debug.Log("Received message from Broker: " + msg);
     }
 
+    public class Ts
+    {
+        //> in ts <
+        //PoseLeft: position {x,y,z}, orientation {x,y,z,w}
+        //PoseRight: position {x,y,z}, orientation {x,y,z,w}
+        //PoseHead: position {x,y,z}, orientation {x,y,z,w}
+        //PoseEyeLeft: position {x,y,z}, orientation {x,y,z,w}
+        //PoseEyeRight: position {x,y,z}, orientation {x,y,z,w}
+
+
+        //Buttons: right_index_trigger, right_hand_trigger, A, B
+        //  right_thumbstick, right_thumb
+        //left_index_trigger, left_hand_trigger, X, Y
+        //  left_thumbstick, left_thumb
+
+        public class Position
+        {
+            public float x { get; set; }
+            public float y { get; set; }
+            public float z { get; set; }
+            public Position(float x_pos, float y_pos, float z_pos)
+            {
+                x = x_pos;
+                y = y_pos;
+                z = z_pos;
+            }
+        }
+        public class Orientation
+        {
+            public float x { get; set; }
+            public float y { get; set; }
+            public float z { get; set; }
+            public float w { get; set; }
+            public Orientation(float x_pos, float y_pos, float z_pos, float w_pos)
+            {
+                x = x_pos;
+                y = y_pos;
+                z = z_pos;
+                w = w_pos;
+            }
+        }
+
+        public class Pose
+        {
+            public Position position { get; set; }
+            public Orientation orientation { get; set; }
+            public Pose(Position pos, Orientation orient)
+            {
+                position = pos;
+                orientation = orient;
+            }
+        }
+
+        public Pose LeftHand { get; set; }
+        public Pose RightHand { get; set; }
+        public Pose LeftEye { get; set; }
+        public Pose RightEye { get; set; }
+        public Pose Head { get; set; }
+
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public Ts(Pose lHand, Pose rHand, Pose lEye, Pose rEye, Pose head)
+        {
+            LeftHand = lHand;
+            RightHand = rHand;
+            LeftEye = lEye;
+            RightEye = rEye;
+            Head = head;
+        }
+        //Other properties, methods, events...
+    }
+
+    void posePublish ()
+    {
+        //Person person1 = new Person("Leopold", 6);
+        //string json = JsonUtility.ToJson(person1);
+
+        //jsonPoseHead = {'position': {"x" : poseHead.ThePose.Position.x, "y": poseHead.ThePose.Position.y, 'z': poseHead.ThePose.Position.z}, 'orientation': {"x": poseHead.ThePose.Orientation.x, "y": poseHead.ThePose.Orientation.y, "z": poseHead.ThePose.Orientation.z, "w": poseHead.ThePose.Orientation.w}};
+    }
+
     public void GetVideo()
     {
         texture = new Texture2D(2, 2);
