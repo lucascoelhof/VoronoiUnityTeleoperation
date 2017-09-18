@@ -7,6 +7,10 @@ using System.Text;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
+using VR = UnityEngine.VR;
+using UnityEngine.UI;
+
+
 
 public class OculusTeleoperation : MonoBehaviour {
 
@@ -22,6 +26,13 @@ public class OculusTeleoperation : MonoBehaviour {
     private Texture2D texture2;
     private Stream stream;
 
+    public Transform leftHand { get; private set; }
+    public Transform rightHand { get; private set; }
+    public Transform leftEye { get; private set; }
+    public Transform rightEye { get; private set; }
+    public Transform head { get; private set; }
+
+
     private int mFrameRefresh = 0;
 
     Byte[] bufferData = new Byte[65536];
@@ -33,9 +44,28 @@ public class OculusTeleoperation : MonoBehaviour {
         mMqttClient.Connect(clientId);
     }
 
+    void updatePoses() {
+        bool monoscopic = OVRManager.instance.monoscopic;
+        head.localRotation = VR.InputTracking.GetLocalRotation(VR.VRNode.CenterEye);
+        leftEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.LeftEye);
+        rightEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.RightEye);
+        leftHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
+        rightHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
+
+        head.localPosition = VR.InputTracking.GetLocalPosition(VR.VRNode.CenterEye);
+        leftEye.localPosition = monoscopic ? head.localPosition : VR.InputTracking.GetLocalPosition(VR.VRNode.LeftEye);
+        rightEye.localPosition = monoscopic ? head.localPosition : VR.InputTracking.GetLocalPosition(VR.VRNode.RightEye);
+        leftHand.localPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
+        rightHand.localPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+
+        OVRInput.Update();
+        bool lTrigger = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
+    }
+
     void MqttPublish(string topic, string message, int qos) {
         byte qos_type;
 
+      
         if (qos == 1)
             qos_type = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE;
         else if (qos == 2)
@@ -53,7 +83,11 @@ public class OculusTeleoperation : MonoBehaviour {
 
     void pose_publish ()
     {
-        
+        float ts = 0;
+
+        while (true){
+            // ts = track 
+        }
     }
 
     public void GetVideo()
@@ -110,7 +144,8 @@ public class OculusTeleoperation : MonoBehaviour {
 
         while ((b = stream.ReadByte()) != -1)
         {
-            if (b == 10) continue; // ignore LF char
+            if (b == 10)
+                continue; // ignore LF char
             if (b == 13)
             { // CR
                 if (atEOL)
@@ -147,6 +182,7 @@ public class OculusTeleoperation : MonoBehaviour {
 	void Update () {
         if((mFrameRefresh++)%60 == 0) {
             MqttPublish("lucas_teste_unity_oculus", DateTime.Now.ToString("h:mm:ss tt"), 0);
+            updatePoses();
         }
 	}
 
