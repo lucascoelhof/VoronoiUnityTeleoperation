@@ -20,8 +20,11 @@ public class OculusTeleoperation : MonoBehaviour {
 
     public MeshRenderer frame;    //Mesh for displaying video
 
-    private string sourceURL = "http://150.164.212.253:8080/stream?topic=/camera1/image&quality=40";
-    private string source2URL = "http://150.164.212.253:8080/stream?topic=/camera2/image&quality=40";
+    //http://150.164.212.253:8080/stream?topic=/camera1/image&quality=40
+    //http://150.164.212.253:8080/stream?topic=/camera2/image&quality=40
+
+    private string sourceURL = "http://24.172.4.142/mjpg/video.mjpg";
+    private string source2URL = "http://24.172.4.142/mjpg/video.mjpg";
     private Texture2D texture;
     private Texture2D texture2;
     private Stream stream;
@@ -194,8 +197,7 @@ public class OculusTeleoperation : MonoBehaviour {
     // Use this for initialization
     void Start () {
         MqttConnect(HOSTNAME);
-        canvas = 
-        GetVideo();
+        //canvas = GetVideo();
     }
 	
 	// Update is called once per frame
@@ -208,7 +210,7 @@ public class OculusTeleoperation : MonoBehaviour {
 	}
 
     public void OnGUI() {
-        GUI.DrawTexture(new Rect(0, 0, Screen.width/2, Screen.height), texture);
-        GUI.DrawTexture(new Rect(Screen.width/2, 0, Screen.width/2, Screen.height), texture);
+        //GUI.DrawTexture(new Rect(0, 0, Screen.width/2, Screen.height), texture);
+        //GUI.DrawTexture(new Rect(Screen.width/2, 0, Screen.width/2, Screen.height), texture);
     }
 }
