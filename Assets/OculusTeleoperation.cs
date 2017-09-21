@@ -20,11 +20,13 @@ public class OculusTeleoperation : MonoBehaviour {
 
     public MeshRenderer frame;    //Mesh for displaying video
 
-    private string sourceURL = "http://24.172.4.142/mjpg/video.mjpg";
-    private string source2URL = "http://24.172.4.142/mjpg/video.mjpg";
+    private string sourceURL = "http://150.164.212.253:8080/stream?topic=/camera1/image&quality=40";
+    private string source2URL = "http://150.164.212.253:8080/stream?topic=/camera2/image&quality=40";
     private Texture2D texture;
     private Texture2D texture2;
     private Stream stream;
+    private Stream stream2;
+    private Canvas canvas;
 
     public Transform leftHand { get; private set; }
     public Transform rightHand { get; private set; }
@@ -45,21 +47,21 @@ public class OculusTeleoperation : MonoBehaviour {
     }
 
     void updatePoses() {
-        bool monoscopic = OVRManager.instance.monoscopic;
-        head.localRotation = VR.InputTracking.GetLocalRotation(VR.VRNode.CenterEye);
-        leftEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.LeftEye);
-        rightEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.RightEye);
-        leftHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
-        rightHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
+        //bool monoscopic = OVRManager.instance.monoscopic;
+        //head.localRotation = VR.InputTracking.GetLocalRotation(VR.VRNode.CenterEye);
+        //leftEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.LeftEye);
+        //rightEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.RightEye);
+        //leftHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
+        //rightHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
 
-        head.localPosition = VR.InputTracking.GetLocalPosition(VR.VRNode.CenterEye);
-        leftEye.localPosition = monoscopic ? head.localPosition : VR.InputTracking.GetLocalPosition(VR.VRNode.LeftEye);
-        rightEye.localPosition = monoscopic ? head.localPosition : VR.InputTracking.GetLocalPosition(VR.VRNode.RightEye);
-        leftHand.localPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
-        rightHand.localPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+        //head.localPosition = VR.InputTracking.GetLocalPosition(VR.VRNode.CenterEye);
+        //leftEye.localPosition = monoscopic ? head.localPosition : VR.InputTracking.GetLocalPosition(VR.VRNode.LeftEye);
+        //rightEye.localPosition = monoscopic ? head.localPosition : VR.InputTracking.GetLocalPosition(VR.VRNode.RightEye);
+        //leftHand.localPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
+        //rightHand.localPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
 
-        OVRInput.Update();
-        bool lTrigger = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
+        //OVRInput.Update();
+        //bool lTrigger = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
     }
 
     void MqttPublish(string topic, string message, int qos) {
@@ -102,16 +104,23 @@ public class OculusTeleoperation : MonoBehaviour {
         // get response stream
         stream = resp.GetResponseStream();
         StartCoroutine(GetFrame());
+
+        texture2 = new Texture2D(2, 2);
+        req = (HttpWebRequest)WebRequest.Create(source2URL);
+        resp = req.GetResponse();
+        stream2 = resp.GetResponseStream();
+        StartCoroutine(GetFrame());
     }
 
     IEnumerator GetFrame()
     {
         Byte[] JpegData = new Byte[65536];
+        Byte[] JpegData2 = new Byte[65536];
 
         while (true)
         {
             int bytesToRead = FindLength(stream);
-            print(bytesToRead);
+            //print(bytesToRead);
             if (bytesToRead == -1)
             {
                 print("End of stream");
@@ -126,12 +135,22 @@ public class OculusTeleoperation : MonoBehaviour {
                 yield return null;
             }
 
+            leftToRead = bytesToRead;
+
+            while (leftToRead > 0)
+            {
+                leftToRead -= stream2.Read(JpegData2, bytesToRead - leftToRead, leftToRead);
+                yield return null;
+            }
+
             MemoryStream ms = new MemoryStream(JpegData, 0, bytesToRead, false, true);
+            MemoryStream ms2 = new MemoryStream(JpegData, 0, bytesToRead, false, true);
 
             texture.LoadImage(ms.GetBuffer());
+            texture2.LoadImage(ms2.GetBuffer());
             //frame.material.mainTexture = texture;
             stream.ReadByte(); // CR after bytes
-            stream.ReadByte(); // LF after bytes
+            stream2.ReadByte(); // LF after bytes
         }
     }
 
@@ -175,6 +194,7 @@ public class OculusTeleoperation : MonoBehaviour {
     // Use this for initialization
     void Start () {
         MqttConnect(HOSTNAME);
+        canvas = 
         GetVideo();
     }
 	
@@ -184,9 +204,11 @@ public class OculusTeleoperation : MonoBehaviour {
             MqttPublish("lucas_teste_unity_oculus", DateTime.Now.ToString("h:mm:ss tt"), 0);
             updatePoses();
         }
+        
 	}
 
     public void OnGUI() {
-        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), texture);
+        GUI.DrawTexture(new Rect(0, 0, Screen.width/2, Screen.height), texture);
+        GUI.DrawTexture(new Rect(Screen.width/2, 0, Screen.width/2, Screen.height), texture);
     }
 }
