@@ -1,6 +1,9 @@
 # =============== #
 # Unity generated #
 # =============== #
+Temp/*
+Obj/*
+.vs/*
 [Tt]emp/
 [Oo]bj/
 [Bb]uild
@@ -9,6 +12,7 @@
 sysinfo.txt
 *.stackdump
 /Assets/AssetStoreTools*
+Assets/*.meta
 *.apk
 *.unitypackage
  

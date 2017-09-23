@@ -7,7 +7,7 @@ using System.Text;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
-using VR = UnityEngine.VR;
+using UnityEngine.VR;
 using UnityEngine.UI;
 
 
@@ -37,6 +37,16 @@ public class OculusTeleoperation : MonoBehaviour {
     public Transform rightEye { get; private set; }
     public Transform head { get; private set; }
 
+    [SerializeField]
+    protected OVRInput.Controller m_controller;
+
+    [SerializeField]
+    protected Transform m_parentTransform;
+
+    protected Vector3 m_anchorOffsetPosition;
+    protected Quaternion m_anchorOffsetRotation;
+
+
 
     private int mFrameRefresh = 0;
 
@@ -49,10 +59,14 @@ public class OculusTeleoperation : MonoBehaviour {
         mMqttClient.Connect(clientId);
     }
 
-    void updatePoses() {
+    void UpdatePose() {
+
+
         //bool monoscopic = OVRManager.instance.monoscopic;
-        //head.localRotation = VR.InputTracking.GetLocalRotation(VR.VRNode.CenterEye);
+        //head.localRotation = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
         //leftEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.LeftEye);
+        //Debug.Log(UnityEngine.VR.VRNode.LeftEye);
+        //leftEye.localRotation = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.LeftEye);
         //rightEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.RightEye);
         //leftHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
         //rightHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
@@ -194,23 +208,64 @@ public class OculusTeleoperation : MonoBehaviour {
         return -1;
     }
 
+    IEnumerator LoadDevice(string newDevice)
+    {
+        VRSettings.LoadDeviceByName(newDevice);
+        yield return null;
+        VRSettings.enabled = true;
+    }
+
+    public void PrintSensors ()
+    {
+        UpdatePose();
+        Debug.Log(head.localRotation);
+    }
+
     // Use this for initialization
     void Start () {
         MqttConnect(HOSTNAME);
-        //canvas = GetVideo();
+        StartCoroutine(LoadDevice("Split"));
+        //canvas = 
+        GetVideo();
+        PrintSensors();
+
+        m_anchorOffsetPosition = transform.localPosition;
+        m_anchorOffsetRotation = transform.localRotation;
+
+        if (m_parentTransform == null)
+        {
+            if (gameObject.transform.parent != null)
+            {
+                m_parentTransform = gameObject.transform.parent.transform;
+            }
+            else
+            {
+                m_parentTransform = new GameObject().transform;
+                m_parentTransform.position = Vector3.zero;
+                m_parentTransform.rotation = Quaternion.identity;
+            }
+        }
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    protected virtual void Awake()
+    {
+        m_anchorOffsetPosition = transform.localPosition;
+        m_anchorOffsetRotation = transform.localRotation;
+
+        // If we are being used with an OVRCameraRig, let it drive input updates, which may come from Update or FixedUpdate.
+    }
+
+    // Update is called once per frame
+    void Update () {
         if((mFrameRefresh++)%60 == 0) {
-            MqttPublish("lucas_teste_unity_oculus", DateTime.Now.ToString("h:mm:ss tt"), 0);
-            updatePoses();
+            //MqttPublish("lucas_teste_unity_oculus", DateTime.Now.ToString("h:mm:ss tt"), 0);
+            UpdatePose();
         }
         
 	}
 
     public void OnGUI() {
-        //GUI.DrawTexture(new Rect(0, 0, Screen.width/2, Screen.height), texture);
-        //GUI.DrawTexture(new Rect(Screen.width/2, 0, Screen.width/2, Screen.height), texture);
+        GUI.DrawTexture(new Rect(0, 0, Screen.width/2, Screen.height), texture);
+        GUI.DrawTexture(new Rect(Screen.width/2, 0, Screen.width/2, Screen.height), texture);
     }
 }
