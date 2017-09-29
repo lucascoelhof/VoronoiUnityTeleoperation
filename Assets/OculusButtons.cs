@@ -9,9 +9,9 @@ public class OculusButtons : ScriptableObject
     //Right: right_index_trigger, right_hand_trigger, A, B
     //       right_thumbstick, right_thumb
 
-    private TouchController touchController{ get; set; }
+    public static TouchController touchController { get; set; }
 
-    public void Update()
+    public static void Update()
     {
         OVRInput.Update();
 
@@ -53,7 +53,7 @@ public class OculusButtons : ScriptableObject
         touchController = newState;
     }
 
-    public class TouchController
+    public struct TouchController
     {
         public Button A;
         public Button B;
@@ -69,7 +69,7 @@ public class OculusButtons : ScriptableObject
         public Vector2 RThumbstick;
     }
 
-    public class Button
+    public struct Button
     {
         public bool state;
         public bool eventUp;

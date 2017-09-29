@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.VR;
 
-public class OculusPoses : ScriptableObject
+public class OculusPoses : MonoBehaviour//ScriptableObject
 {
     //> in OculusPoses <
     //PoseLeft: position {x,y,z}, orientation {x,y,z,w}
@@ -10,9 +10,9 @@ public class OculusPoses : ScriptableObject
     //PoseEyeLeft: position {x,y,z}, orientation {x,y,z,w}
     //PoseEyeRight: position {x,y,z}, orientation {x,y,z,w}
 
-    private PoseVR poseVR { get; set; }
+    public static PoseVR poseVR { get; set; }
 
-    public void Update()
+    public static void Update()
     {
         OVRInput.Update();
         PoseVR newPose = new PoseVR();
@@ -34,13 +34,13 @@ public class OculusPoses : ScriptableObject
         poseVR = newPose;
     }
 
-    public class Pose
+    public struct Pose
     {
         public Vector3 Position;
         public Quaternion Orientation;
     }
 
-    public class PoseVR
+    public struct PoseVR
     {
         public Pose LeftHand;
         public Pose RightHand;
