@@ -16,7 +16,7 @@ public class OculusTeleoperation : MonoBehaviour {
 
     private MqttClient mMqttClient;
 
-    private const string HOSTNAME = "iot.eclipse.org";
+    private const string HOSTNAME = "150.164.212.253";
 
     public MeshRenderer frame;    //Mesh for displaying video
 
@@ -57,28 +57,6 @@ public class OculusTeleoperation : MonoBehaviour {
         mMqttClient.MqttMsgPublishReceived += onMqttMessage;
         string clientId = System.Guid.NewGuid().ToString();
         mMqttClient.Connect(clientId);
-    }
-
-    void UpdatePose() {
-
-
-        //bool monoscopic = OVRManager.instance.monoscopic;
-        //head.localRotation = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
-        //leftEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.LeftEye);
-        //Debug.Log(UnityEngine.VR.VRNode.LeftEye);
-        //leftEye.localRotation = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.LeftEye);
-        //rightEye.localRotation = monoscopic ? head.localRotation : VR.InputTracking.GetLocalRotation(VR.VRNode.RightEye);
-        //leftHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
-        //rightHand.localRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-
-        //head.localPosition = VR.InputTracking.GetLocalPosition(VR.VRNode.CenterEye);
-        //leftEye.localPosition = monoscopic ? head.localPosition : VR.InputTracking.GetLocalPosition(VR.VRNode.LeftEye);
-        //rightEye.localPosition = monoscopic ? head.localPosition : VR.InputTracking.GetLocalPosition(VR.VRNode.RightEye);
-        //leftHand.localPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
-        //rightHand.localPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-
-        //OVRInput.Update();
-        //bool lTrigger = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
     }
 
     void MqttPublish(string topic, string message, int qos) {
@@ -215,53 +193,19 @@ public class OculusTeleoperation : MonoBehaviour {
         VRSettings.enabled = true;
     }
 
-    public void PrintSensors ()
-    {
-        UpdatePose();
-        Debug.Log(head.localRotation);
-    }
-
     // Use this for initialization
     void Start () {
         MqttConnect(HOSTNAME);
         StartCoroutine(LoadDevice("Split"));
         //canvas = 
         GetVideo();
-        PrintSensors();
-
-        m_anchorOffsetPosition = transform.localPosition;
-        m_anchorOffsetRotation = transform.localRotation;
-
-        if (m_parentTransform == null)
-        {
-            if (gameObject.transform.parent != null)
-            {
-                m_parentTransform = gameObject.transform.parent.transform;
-            }
-            else
-            {
-                m_parentTransform = new GameObject().transform;
-                m_parentTransform.position = Vector3.zero;
-                m_parentTransform.rotation = Quaternion.identity;
-            }
-        }
     }
-
-    protected virtual void Awake()
-    {
-        m_anchorOffsetPosition = transform.localPosition;
-        m_anchorOffsetRotation = transform.localRotation;
-
-        // If we are being used with an OVRCameraRig, let it drive input updates, which may come from Update or FixedUpdate.
-    }
-
+    
     // Update is called once per frame
     void Update () {
-        if((mFrameRefresh++)%60 == 0) {
-            //MqttPublish("lucas_teste_unity_oculus", DateTime.Now.ToString("h:mm:ss tt"), 0);
-            UpdatePose();
-        }
-        
+        OculusPoses.Update();
+        String jsonStr = OculusPoses.toJSON();
+        MqttPublish("lucas_teste_unity_oculus", jsonStr, 0);
 	}
 
     public void OnGUI() {

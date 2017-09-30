@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.VR;
 
 public class OculusPoses : MonoBehaviour//ScriptableObject
@@ -11,6 +12,7 @@ public class OculusPoses : MonoBehaviour//ScriptableObject
     //PoseEyeRight: position {x,y,z}, orientation {x,y,z,w}
 
     public static PoseVR poseVR { get; set; }
+
 
     public static void Update()
     {
@@ -31,15 +33,25 @@ public class OculusPoses : MonoBehaviour//ScriptableObject
         newPose.LeftHand.Orientation = InputTracking.GetLocalRotation(VRNode.LeftHand);
         newPose.RightHand.Orientation = InputTracking.GetLocalRotation(VRNode.RightHand);
 
+        OculusButtons.Update();
+        newPose.Buttons = OculusButtons.touchController;
+
         poseVR = newPose;
     }
 
+    public static string toJSON()
+    {
+        return JsonUtility.ToJson(poseVR);
+    }
+
+    [Serializable]
     public struct Pose
     {
         public Vector3 Position;
         public Quaternion Orientation;
     }
 
+    [Serializable]
     public struct PoseVR
     {
         public Pose LeftHand;
@@ -48,5 +60,6 @@ public class OculusPoses : MonoBehaviour//ScriptableObject
         public Pose RightEye;
         public Pose CenterEye;
         public Pose Head;
+        public OculusButtons.TouchController Buttons;
     }
 }

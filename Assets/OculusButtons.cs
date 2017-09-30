@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System;
 
 public class OculusButtons : ScriptableObject
 {
@@ -53,6 +54,7 @@ public class OculusButtons : ScriptableObject
         touchController = newState;
     }
 
+    [Serializable]
     public struct TouchController
     {
         public Button A;
@@ -69,6 +71,7 @@ public class OculusButtons : ScriptableObject
         public Vector2 RThumbstick;
     }
 
+    [Serializable]
     public struct Button
     {
         public bool state;
