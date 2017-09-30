@@ -78,15 +78,6 @@ public class OculusTeleoperation : MonoBehaviour {
         Debug.Log("Received message from Broker: " + msg);
     }
 
-    void pose_publish ()
-    {
-        float ts = 0;
-
-        while (true){
-            // ts = track 
-        }
-    }
-
     public void GetVideo()
     {
         texture = new Texture2D(2, 2);

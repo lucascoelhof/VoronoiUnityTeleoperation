@@ -1,9 +1,6 @@
 # =============== #
 # Unity generated #
 # =============== #
-Temp/*
-Obj/*
-.vs/*
 [Tt]emp/
 [Oo]bj/
 [Bb]uild
@@ -15,7 +12,7 @@ sysinfo.txt
 Assets/*.meta
 *.apk
 *.unitypackage
- 
+
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
 # ===================================== #
@@ -47,3 +44,4 @@ ehthumbs.db
 [Dd]esktop.ini
 Corridor/Library/ShaderCache/
 Corridor/Library/metadata/
+=======
