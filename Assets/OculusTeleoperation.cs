@@ -7,20 +7,46 @@ using System.Text;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
+using UnityEngine.VR;
+using UnityEngine.UI;
+
+
 
 public class OculusTeleoperation : MonoBehaviour {
 
     private MqttClient mMqttClient;
 
-    private const string HOSTNAME = "iot.eclipse.org";
+    private const string HOSTNAME = "150.164.212.253";
 
     public MeshRenderer frame;    //Mesh for displaying video
+
+    //http://150.164.212.253:8080/stream?topic=/camera1/image&quality=40
+    //http://150.164.212.253:8080/stream?topic=/camera2/image&quality=40
 
     private string sourceURL = "http://24.172.4.142/mjpg/video.mjpg";
     private string source2URL = "http://24.172.4.142/mjpg/video.mjpg";
     private Texture2D texture;
     private Texture2D texture2;
     private Stream stream;
+    private Stream stream2;
+    private Canvas canvas;
+
+    public Transform leftHand { get; private set; }
+    public Transform rightHand { get; private set; }
+    public Transform leftEye { get; private set; }
+    public Transform rightEye { get; private set; }
+    public Transform head { get; private set; }
+
+    [SerializeField]
+    protected OVRInput.Controller m_controller;
+
+    [SerializeField]
+    protected Transform m_parentTransform;
+
+    protected Vector3 m_anchorOffsetPosition;
+    protected Quaternion m_anchorOffsetRotation;
+
+
 
     private int mFrameRefresh = 0;
 
@@ -36,6 +62,7 @@ public class OculusTeleoperation : MonoBehaviour {
     void MqttPublish(string topic, string message, int qos) {
         byte qos_type;
 
+      
         if (qos == 1)
             qos_type = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE;
         else if (qos == 2)
@@ -51,86 +78,6 @@ public class OculusTeleoperation : MonoBehaviour {
         Debug.Log("Received message from Broker: " + msg);
     }
 
-    public class Ts
-    {
-        //> in ts <
-        //PoseLeft: position {x,y,z}, orientation {x,y,z,w}
-        //PoseRight: position {x,y,z}, orientation {x,y,z,w}
-        //PoseHead: position {x,y,z}, orientation {x,y,z,w}
-        //PoseEyeLeft: position {x,y,z}, orientation {x,y,z,w}
-        //PoseEyeRight: position {x,y,z}, orientation {x,y,z,w}
-
-
-        //Buttons: right_index_trigger, right_hand_trigger, A, B
-        //  right_thumbstick, right_thumb
-        //left_index_trigger, left_hand_trigger, X, Y
-        //  left_thumbstick, left_thumb
-
-        public class Position
-        {
-            public float x { get; set; }
-            public float y { get; set; }
-            public float z { get; set; }
-            public Position(float x_pos, float y_pos, float z_pos)
-            {
-                x = x_pos;
-                y = y_pos;
-                z = z_pos;
-            }
-        }
-        public class Orientation
-        {
-            public float x { get; set; }
-            public float y { get; set; }
-            public float z { get; set; }
-            public float w { get; set; }
-            public Orientation(float x_pos, float y_pos, float z_pos, float w_pos)
-            {
-                x = x_pos;
-                y = y_pos;
-                z = z_pos;
-                w = w_pos;
-            }
-        }
-
-        public class Pose
-        {
-            public Position position { get; set; }
-            public Orientation orientation { get; set; }
-            public Pose(Position pos, Orientation orient)
-            {
-                position = pos;
-                orientation = orient;
-            }
-        }
-
-        public Pose LeftHand { get; set; }
-        public Pose RightHand { get; set; }
-        public Pose LeftEye { get; set; }
-        public Pose RightEye { get; set; }
-        public Pose Head { get; set; }
-
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public Ts(Pose lHand, Pose rHand, Pose lEye, Pose rEye, Pose head)
-        {
-            LeftHand = lHand;
-            RightHand = rHand;
-            LeftEye = lEye;
-            RightEye = rEye;
-            Head = head;
-        }
-        //Other properties, methods, events...
-    }
-
-    void posePublish ()
-    {
-        //Person person1 = new Person("Leopold", 6);
-        //string json = JsonUtility.ToJson(person1);
-
-        //jsonPoseHead = {'position': {"x" : poseHead.ThePose.Position.x, "y": poseHead.ThePose.Position.y, 'z': poseHead.ThePose.Position.z}, 'orientation': {"x": poseHead.ThePose.Orientation.x, "y": poseHead.ThePose.Orientation.y, "z": poseHead.ThePose.Orientation.z, "w": poseHead.ThePose.Orientation.w}};
-    }
-
     public void GetVideo()
     {
         texture = new Texture2D(2, 2);
@@ -143,16 +90,23 @@ public class OculusTeleoperation : MonoBehaviour {
         // get response stream
         stream = resp.GetResponseStream();
         StartCoroutine(GetFrame());
+
+        texture2 = new Texture2D(2, 2);
+        req = (HttpWebRequest)WebRequest.Create(source2URL);
+        resp = req.GetResponse();
+        stream2 = resp.GetResponseStream();
+        StartCoroutine(GetFrame());
     }
 
     IEnumerator GetFrame()
     {
         Byte[] JpegData = new Byte[65536];
+        Byte[] JpegData2 = new Byte[65536];
 
         while (true)
         {
             int bytesToRead = FindLength(stream);
-            print(bytesToRead);
+            //print(bytesToRead);
             if (bytesToRead == -1)
             {
                 print("End of stream");
@@ -167,12 +121,22 @@ public class OculusTeleoperation : MonoBehaviour {
                 yield return null;
             }
 
+            leftToRead = bytesToRead;
+
+            while (leftToRead > 0)
+            {
+                leftToRead -= stream2.Read(JpegData2, bytesToRead - leftToRead, leftToRead);
+                yield return null;
+            }
+
             MemoryStream ms = new MemoryStream(JpegData, 0, bytesToRead, false, true);
+            MemoryStream ms2 = new MemoryStream(JpegData, 0, bytesToRead, false, true);
 
             texture.LoadImage(ms.GetBuffer());
+            texture2.LoadImage(ms2.GetBuffer());
             //frame.material.mainTexture = texture;
             stream.ReadByte(); // CR after bytes
-            stream.ReadByte(); // LF after bytes
+            stream2.ReadByte(); // LF after bytes
         }
     }
 
@@ -185,7 +149,8 @@ public class OculusTeleoperation : MonoBehaviour {
 
         while ((b = stream.ReadByte()) != -1)
         {
-            if (b == 10) continue; // ignore LF char
+            if (b == 10)
+                continue; // ignore LF char
             if (b == 13)
             { // CR
                 if (atEOL)
@@ -212,20 +177,30 @@ public class OculusTeleoperation : MonoBehaviour {
         return -1;
     }
 
+    IEnumerator LoadDevice(string newDevice)
+    {
+        VRSettings.LoadDeviceByName(newDevice);
+        yield return null;
+        VRSettings.enabled = true;
+    }
+
     // Use this for initialization
     void Start () {
         MqttConnect(HOSTNAME);
+        StartCoroutine(LoadDevice("Split"));
+        //canvas = 
         GetVideo();
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if((mFrameRefresh++)%60 == 0) {
-            MqttPublish("lucas_teste_unity_oculus", DateTime.Now.ToString("h:mm:ss tt"), 0);
-        }
+    
+    // Update is called once per frame
+    void Update () {
+        OculusPoses.Update();
+        String jsonStr = OculusPoses.toJSON();
+        MqttPublish("lucas_teste_unity_oculus", jsonStr, 0);
 	}
 
     public void OnGUI() {
-        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), texture);
+        GUI.DrawTexture(new Rect(0, 0, Screen.width/2, Screen.height), texture);
+        GUI.DrawTexture(new Rect(Screen.width/2, 0, Screen.width/2, Screen.height), texture);
     }
 }
