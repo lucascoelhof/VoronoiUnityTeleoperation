@@ -28,13 +28,8 @@ public class TestLocation : MonoBehaviour {
         //oculusPoses.Head.Position = InputTracking.GetLocalPosition(VRNode.Head);
         //Debug.Log(oculusPoses.headset.Head.Position.x);
 
-        OculusPoses.Update();
-        Debug.Log(OculusPoses.poseVR.Head.Position);
-
-        OculusButtons.Update();
-        Debug.Log(OculusButtons.touchController.A.state);
-        
-        string json = JsonUtility.ToJson(OculusButtons.touchController);
+        OculusPoses.Update();        
+        string json = JsonUtility.ToJson(OculusPoses.poseVR);
         Debug.Log(json);
 
         //OVRInput.Update();
