@@ -10,8 +10,8 @@ public class VideoStream : MonoBehaviour {
     public String sourceURL;
     public enum eyeType
     {
-        left,
-        right
+        left=0,
+        right=1
     };
 
     public eyeType eye;
@@ -21,7 +21,8 @@ public class VideoStream : MonoBehaviour {
     //http://150.164.212.253:8080/stream?topic=/camera1/image&quality=40 
     //http://150.164.212.253:8080/stream?topic=/camera2/image&quality=40
 
-    private Texture2D texture;
+    //private static Texture2D textureLeft = new Texture2D(2,2);
+    //private static Texture2D textureRight = new Texture2D(2, 2);
     private Stream stream;
 
     public GameObject ImageOnPanel;  ///set this in the inspector
@@ -45,6 +46,8 @@ public class VideoStream : MonoBehaviour {
 
     IEnumerator GetFrame()
     {
+        OculusTeleoperation.streamingVideo[(int)eye] = true;
+
         Byte[] JpegData = new Byte[65536];
 
         while (true)
@@ -67,9 +70,14 @@ public class VideoStream : MonoBehaviour {
             leftToRead = bytesToRead;
 
             MemoryStream ms = new MemoryStream(JpegData, 0, bytesToRead, false, true);
-            texture.LoadImage(ms.GetBuffer());
+            //texture.LoadImage(ms.GetBuffer());
+            //if (eye == eyeType.left)
+            OculusTeleoperation.textureLeft.LoadImage(ms.GetBuffer());
+            //if (eye == eyeType.right) textureRight.LoadImage(ms.GetBuffer());
             //frame.material.mainTexture = texture;
             stream.ReadByte(); // CR after bytes
+
+            OculusTeleoperation.streamingVideo[(int)eye] = false;
         }
     }
 
@@ -110,18 +118,43 @@ public class VideoStream : MonoBehaviour {
         return -1;
     }
 
+    //IEnumerator CameraToTexture()
+    //{
+    //    OculusTeleoperation.renderingTexture[(int)eye] = true;
+
+    //    //texture = new Texture2D(2, 2);
+    //    rawImage = (RawImage)this.GetComponent<RawImage>();
+    //    rawImage.texture = texture;
+
+    //    OculusTeleoperation.renderingTexture[(int)eye] = false;
+
+    //    yield return null;
+    //}
+
     // Use this for initialization
     void Start () {
         //texture = new Texture2D(2, 2);
         //img = (RawImage) ImageOnPanel.GetComponent<RawImage>();
         //img.texture = (Texture) texture;
         //texture.Apply();
-
         //var texture = new Texture2D(2, 2, TextureFormat.ARGB32, false);
-        texture = new Texture2D(2, 2);
-        rawImage = (RawImage)this.GetComponent<RawImage>();
-        rawImage.texture = texture;
 
+        //if(!OculusTeleoperation.renderingTexture[(int)eye])
+        //    StartCoroutine(CameraToTexture());
+
+        if (!OculusTeleoperation.streamingVideo[(int)eye])
+        {
+            //texture = new Texture2D(2, 2);
+            OculusTeleoperation.textureLeft = new Texture2D(2, 2);
+            rawImage = (RawImage)this.GetComponent<RawImage>();
+            //rawImage.texture = texture;
+            //if (eye == eyeType.left)
+            rawImage.texture = OculusTeleoperation.textureLeft;
+        }
+        //if (eye == eyeType.right) rawImage.texture = textureRight;
+
+        //Debug.Log(OculusTeleoperation.streamingVideo[(int)eye]);
+        //if(!OculusTeleoperation.streamingVideo[(int)eye])
         GetVideo();
     }
 

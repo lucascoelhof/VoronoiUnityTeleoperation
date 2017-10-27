@@ -16,12 +16,15 @@ public class OculusTeleoperation : MonoBehaviour {
 
     private MqttClient mMqttClient;
 
-    private const string HOSTNAME = "150.164.212.253";
+    private const string HOSTNAME = "150.164.212.253";//"150.164.212.253";
 
     int frameHash = 0;
 
     private int mFrameRefresh = 0;
 
+    public static bool[] streamingVideo = {false,false};
+    public static bool[] renderingTexture = {false,false};
+    public static Texture2D textureLeft;
 
     void MqttConnect(string hostname) {
         mMqttClient = new MqttClient(hostname);
@@ -61,14 +64,13 @@ public class OculusTeleoperation : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        textureLeft = new Texture2D(2, 2);
         MqttConnect(HOSTNAME);
     }
     
     // Update is called once per frame
     void Update () {
-        
-        
-        if(++frameHash == 10)
+        if(++frameHash == 2)
         {
             OculusPoses.Update();
             String jsonStr = JsonUtility.ToJson(OculusPoses.poseVR);
@@ -77,7 +79,6 @@ public class OculusTeleoperation : MonoBehaviour {
             //Debug.Log(jsonStr);
         }
 	}
-
     public void OnGUI() {
          
     }
