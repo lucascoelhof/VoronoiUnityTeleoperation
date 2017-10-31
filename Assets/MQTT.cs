@@ -5,14 +5,15 @@ using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 using UnityEngine;
 
-public class MQTT : MonoBehaviour {
+public class MQTT {
 
     public MqttClient Client;
-    //private const string DEFAULT_HOSTNAME = "150.164.212.253";
-    private const string DEFAULT_HOSTNAME = "iot.eclipse.org";
+    private const string DEFAULT_HOSTNAME = "150.164.212.223";
+    //private const string DEFAULT_HOSTNAME = "iot.eclipse.org";
 
     private const int DEFAULT_QoS = 0;
     public string message;
+    public string lastTopic;
 
 
     /// <summary>
@@ -22,10 +23,10 @@ public class MQTT : MonoBehaviour {
     public void Connect(string hostname = DEFAULT_HOSTNAME)
     {
         Client = new MqttClient(hostname);
-        Client.MqttMsgPublishReceived += onMqttMessage;
+        //Client.MqttMsgPublishReceived += onMqttMessage;
         string clientId = System.Guid.NewGuid().ToString();
         Client.Connect(clientId);
-        Debug.Log("Connecting to host " + hostname + " as " + clientId);
+        Debug.Log("MQTT: Connecting to host \"" + hostname + "\" as \"" + clientId + "\"");
     }
 
     /// <summary>
@@ -37,7 +38,7 @@ public class MQTT : MonoBehaviour {
     public void Publish(string topic, string message, int qos = 0)
     {
         byte qos_type;
-        
+
         if (qos == 1)
             qos_type = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE;
         else if (qos == 2)
@@ -46,6 +47,11 @@ public class MQTT : MonoBehaviour {
             qos_type = MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE;
 
         Client.Publish(topic, Encoding.UTF8.GetBytes(message), qos_type, false);
+    }
+    
+    public void AddCallback(MqttClient.MqttMsgPublishEventHandler callback)
+    {
+        Client.MqttMsgPublishReceived += callback;
     }
 
     /// <summary>
@@ -77,20 +83,10 @@ public class MQTT : MonoBehaviour {
         Client.Subscribe(topics, qos_type);
     }
 
-    private void onMqttMessage(object sender, MqttMsgPublishEventArgs e)
+    private void DefaultCallback (object sender, MqttMsgPublishEventArgs e)
     {
         message = System.Text.Encoding.UTF8.GetString(e.Message);
-        Debug.Log("Received message from Broker: " + message);
+        lastTopic = e.Topic;
+        Debug.Log("MQTT: Received message \"" + message + "\" from topic \"" + lastTopic + "\"");
     }
-
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
