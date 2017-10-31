@@ -14,54 +14,14 @@ using UnityEngine.UI;
 
 public class OculusTeleoperation : MonoBehaviour {
 
-    private MqttClient mMqttClient;
+    MQTT mMqtt = new MQTT();
 
-    private const string HOSTNAME = "150.164.212.253";
-
-    int frameHash = 0;
-
-    private int mFrameRefresh = 0;
-
-
-    void MqttConnect(string hostname) {
-        mMqttClient = new MqttClient(hostname);
-        mMqttClient.MqttMsgPublishReceived += onMqttMessage;
-        string clientId = System.Guid.NewGuid().ToString();
-        mMqttClient.Connect(clientId);
-    }
-
-    void MqttPublish(string topic, string message, int qos) {
-        byte qos_type;
-
-      
-        if (qos == 1)
-            qos_type = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE;
-        else if (qos == 2)
-            qos_type = MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE;
-        else
-            qos_type = MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE;
-            
-        mMqttClient.Publish(topic, Encoding.UTF8.GetBytes(message), qos_type, false);
-    }
+    private int frameHash = 0;
+    //private int mFrameRefresh = 0;
     
-    void onMqttMessage(object sender, MqttMsgPublishEventArgs e) {
-        string msg = System.Text.Encoding.UTF8.GetString(e.Message);
-        Debug.Log("Received message from Broker: " + msg);
-    }
-
-    void pose_publish ()
-    {
-        float ts = 0;
-
-        while (true){
-            // ts = track 
-        }
-    }
-
-
     // Use this for initialization
     void Start () {
-        MqttConnect(HOSTNAME);
+        mMqtt.Connect();
     }
     
     // Update is called once per frame
@@ -72,7 +32,7 @@ public class OculusTeleoperation : MonoBehaviour {
         {
             OculusPoses.Update();
             String jsonStr = JsonUtility.ToJson(OculusPoses.poseVR);
-            MqttPublish("lucas_teste_unity_oculus", jsonStr, 0);
+            mMqtt.Publish("lucas_teste_unity_oculus", jsonStr);
             frameHash = 0;
             //Debug.Log(jsonStr);
         }
