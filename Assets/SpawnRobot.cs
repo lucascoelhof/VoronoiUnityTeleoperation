@@ -18,7 +18,6 @@ public class SpawnRobot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        x += (float) 0.1;
         Destroy(epuck);
         epuck = Instantiate(Resources.Load("epuck"), Position, Orientation) as GameObject;
     }
