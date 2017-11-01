@@ -46,18 +46,26 @@ public class FetchRobots : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        while(robotsToSpawn.Count > 0)
+        foreach(KeyValuePair<string, Robot> kvp in robots)
         {
-            if ( !robotShape.ContainsKey((string)robotsToSpawn.Peek()))
+            if (!robotShape.ContainsKey(kvp.Key))
             {
-                robotShape.Add((string)robotsToSpawn.Peek(), gameObject.AddComponent<SpawnRobot>());
+                robotShape.Add(kvp.Key, gameObject.AddComponent<SpawnRobot>());
             }
 
-            robotShape[(string)robotsToSpawn.Peek()].Position = robots[(string)robotsToSpawn.Peek()].Position;
-            robotShape[(string)robotsToSpawn.Peek()].Orientation = robots[(string)robotsToSpawn.Peek()].Orientation;
-
-            robotsToSpawn.Dequeue();
+            robotShape[kvp.Key].Position = robots[kvp.Key].Position;
+            robotShape[kvp.Key].Orientation = robots[kvp.Key].Orientation;
         }
+
+        //while(robotsToSpawn.Count > 0)
+        //{
+            
+
+        //    robotShape[(string)robotsToSpawn.Peek()].Position = robots[(string)robotsToSpawn.Peek()].Position;
+        //    robotShape[(string)robotsToSpawn.Peek()].Orientation = robots[(string)robotsToSpawn.Peek()].Orientation;
+
+        //    robotsToSpawn.Dequeue();
+        //}
     }
 
     public class Robot
