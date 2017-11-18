@@ -56,16 +56,6 @@ public class FetchRobots : MonoBehaviour {
             robotShape[kvp.Key].Position = robots[kvp.Key].Position;
             robotShape[kvp.Key].Orientation = robots[kvp.Key].Orientation;
         }
-
-        //while(robotsToSpawn.Count > 0)
-        //{
-            
-
-        //    robotShape[(string)robotsToSpawn.Peek()].Position = robots[(string)robotsToSpawn.Peek()].Position;
-        //    robotShape[(string)robotsToSpawn.Peek()].Orientation = robots[(string)robotsToSpawn.Peek()].Orientation;
-
-        //    robotsToSpawn.Dequeue();
-        //}
     }
 
     public class Robot

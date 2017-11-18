@@ -8,8 +8,8 @@ using UnityEngine;
 public class MQTT {
 
     public MqttClient Client;
-    //private const string DEFAULT_HOSTNAME = "150.164.212.223";
-    private const string DEFAULT_HOSTNAME = "iot.eclipse.org";
+    private const string DEFAULT_HOSTNAME = "150.164.212.223";
+    //private const string DEFAULT_HOSTNAME = "iot.eclipse.org";
 
     private const int DEFAULT_QoS = 0;
     public string message;

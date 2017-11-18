@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<robot name="epuck">
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <cylinder length="0.034" radius="0.035"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0.02"/>
+            <material name="light_grey">
+                <color rgba="0.8 0.8 0.8 0.5"/>
+            </material>
+        </visual>
+    </link>
+
+    <link name="right_wheel">
+        <visual>
+            <geometry>
+                <cylinder length="0.002" radius="0.02"/>
+            </geometry>
+            <origin rpy="0 1.57075 0"/>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="base_to_right_wheel" type="fixed">
+        <parent link="base_link"/>
+        <child link="right_wheel"/>
+        <origin rpy="0 0 1.57075" xyz="0.0 -0.035 0.02"/>
+    </joint>
+
+    <link name="left_wheel">
+        <visual>
+            <geometry>
+                <cylinder length="0.002" radius="0.02"/>
+            </geometry>
+            <origin rpy="0 1.57075 0"/>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="base_to_left_wheel" type="fixed">
+        <parent link="base_link"/>
+        <child link="left_wheel"/>
+        <origin rpy="0 0 1.57075" xyz="0.0 0.035 0.02"/>
+    </joint>
+
+    <link name="body_top">
+        <visual>
+            <geometry>
+                <cylinder length="0.002" radius="0.037"/>
+            </geometry>
+            <material name="green_pcb">
+                <color rgba="0.23 0.4 0.16 1.0"/>
+            </material>
+        </visual>
+    </link>
+
+    <joint name="base_to_body_top" type="fixed">
+        <parent link="base_link"/>
+        <child link="body_top"/>
+        <origin xyz="0.0 0.0 0.037"/>
+    </joint>
+
+</robot>

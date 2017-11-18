@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/ovr-teleop.unity
-  isLoaded: 1
-  isActive: 1
