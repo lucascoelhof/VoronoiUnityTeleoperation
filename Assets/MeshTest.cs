@@ -11,6 +11,7 @@ public class MeshTest : MonoBehaviour {
     Vector3[] vertices;
     Vector3[] normals;
     int[] triangles;
+    Color[] colors;
 
     void Start()
     {
@@ -23,6 +24,7 @@ public class MeshTest : MonoBehaviour {
         MeshHelper.Subdivide(mesh, 3);
         meshfilter.mesh = mesh;
         vertices = mesh.vertices;
+        colors = new Color[vertices.Length];
 
 
         //int v = mesh.vertices.Length;
@@ -43,12 +45,22 @@ public class MeshTest : MonoBehaviour {
     void Update()
     {
         int i = 0;
-        while (i < vertices.Length)
+        OculusPoses.Update();
+        if (OculusPoses.poseVR.Buttons.A.state)
         {
-            vertices[i].y = GaussianPointEvaluate(vertices[i], OculusPoses.poseVR.RightHand.Position);
-            i++;
+            while (i < vertices.Length)
+            {
+                vertices[i].y = GaussianPointEvaluate(vertices[i], OculusPoses.poseVR.RightHand.Position);
+                //float red = vertices[i].y;
+                //float green = vertices[i].y;
+                colors[i] = Color.Lerp(Color.red, Color.green, vertices[i].y);
+                i++;
+            }
+            mesh.vertices = vertices;
+            mesh.colors = colors;
+            meshfilter.mesh = mesh;
         }
-        mesh.vertices = vertices;
+        
     }
 
 

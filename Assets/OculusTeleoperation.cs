@@ -11,31 +11,30 @@ using UnityEngine.VR;
 using UnityEngine.UI;
 
 
-
 public class OculusTeleoperation : MonoBehaviour {
-
-    MQTT mMqtt = new MQTT();
+    
+    //MQTT mMqtt = new MQTT();
 
     private int frameHash = 0;
     //private int mFrameRefresh = 0;
     
     // Use this for initialization
     void Start () {
-        mMqtt.Connect();
+        //mMqtt.Connect();
     }
     
     // Update is called once per frame
     void Update () {
         
         
-        if(++frameHash == 10)
-        {
-            OculusPoses.Update();
-            String jsonStr = JsonUtility.ToJson(OculusPoses.poseVR);
-            mMqtt.Publish("lucas_teste_unity_oculus", jsonStr);
-            frameHash = 0;
+        //if(++frameHash == 10)
+        //{
+            //OculusPoses.Update();
+            //String jsonStr = JsonUtility.ToJson(OculusPoses.poseVR);
+            //mMqtt.Publish("lucas_teste_unity_oculus", jsonStr);
+            //frameHash = 0;
             //Debug.Log(jsonStr);
-        }
+        //}
 	}
 
     public void OnGUI() {
