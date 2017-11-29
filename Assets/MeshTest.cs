@@ -20,6 +20,7 @@ public class MeshTest : MonoBehaviour {
 
     void Start()
     {
+        gameObject.GetComponent<Renderer>().enabled = true;
         meshfilter = GetComponent<MeshFilter>();
         mesh = meshfilter.mesh;
         vertices = mesh.vertices;
@@ -55,11 +56,13 @@ public class MeshTest : MonoBehaviour {
         OculusPoses.Update();
         if (OculusPoses.poseVR.Buttons.A.state || OculusPoses.poseVR.Buttons.RHandTrigger > 0.75)
         {
+            gameObject.GetComponent<Renderer>().enabled = true;
             if (changingSigmaDistance)
             {
                 Vector3 distanceHands = OculusPoses.poseVR.RightHand.Position - OculusPoses.poseVR.LeftHand.Position;
-                float finalHandsDistance = Mathf.Sqrt(Mathf.Pow(distanceHands.x, 2) + Mathf.Pow(distanceHands.z, 2)) - initialHandsDistance;
+                float finalHandsDistance = Mathf.Sqrt(Mathf.Pow(distanceHands.x, 2) + Mathf.Pow(distanceHands.z, 2)) - initialHandsDistance; 
                 sigma += finalHandsDistance;
+                if (sigma < 0) sigma = 0;
                 changingSigmaDistance = false;
             }
             if (OculusPoses.poseVR.Buttons.X.state || OculusPoses.poseVR.Buttons.LHandTrigger > 0.75)
@@ -83,7 +86,9 @@ public class MeshTest : MonoBehaviour {
             mesh.colors = colors;
             meshfilter.mesh = mesh;
         }
-        
+
+        if (!(OculusPoses.poseVR.Buttons.A.state || OculusPoses.poseVR.Buttons.RHandTrigger > 0.75))
+            gameObject.GetComponent<Renderer>().enabled = false;
     }
 
 

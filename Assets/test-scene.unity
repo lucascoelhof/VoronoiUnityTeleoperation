@@ -1781,7 +1781,7 @@ GameObject:
   - component: {fileID: 1698480531}
   - component: {fileID: 1698480534}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Gaussian
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
