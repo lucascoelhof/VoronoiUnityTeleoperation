@@ -13,6 +13,11 @@ public class MeshTest : MonoBehaviour {
     int[] triangles;
     Color[] colors;
 
+    float initialHandsDistance;
+    bool changingSigmaDistance;
+
+    private float sigma;
+
     void Start()
     {
         meshfilter = GetComponent<MeshFilter>();
@@ -26,6 +31,9 @@ public class MeshTest : MonoBehaviour {
         vertices = mesh.vertices;
         colors = new Color[vertices.Length];
 
+        sigma = 1F;
+        initialHandsDistance = 0;
+        changingSigmaDistance = false;
 
         //int v = mesh.vertices.Length;
 
@@ -44,18 +52,33 @@ public class MeshTest : MonoBehaviour {
 
     void Update()
     {
-        int i = 0;
         OculusPoses.Update();
-        if (OculusPoses.poseVR.Buttons.A.state)
+        if (OculusPoses.poseVR.Buttons.A.state || OculusPoses.poseVR.Buttons.RHandTrigger > 0.75)
         {
+            if (changingSigmaDistance)
+            {
+                Vector3 distanceHands = OculusPoses.poseVR.RightHand.Position - OculusPoses.poseVR.LeftHand.Position;
+                float finalHandsDistance = Mathf.Sqrt(Mathf.Pow(distanceHands.x, 2) + Mathf.Pow(distanceHands.z, 2)) - initialHandsDistance;
+                sigma += finalHandsDistance;
+                changingSigmaDistance = false;
+            }
+            if (OculusPoses.poseVR.Buttons.X.state || OculusPoses.poseVR.Buttons.LHandTrigger > 0.75)
+            {
+                Vector3 distanceHands = OculusPoses.poseVR.RightHand.Position - OculusPoses.poseVR.LeftHand.Position;
+                initialHandsDistance = Mathf.Sqrt(Mathf.Pow(distanceHands.x, 2) + Mathf.Pow(distanceHands.z, 2));
+                changingSigmaDistance = true;
+            }
+
+            int i = 0;
             while (i < vertices.Length)
             {
-                vertices[i].y = GaussianPointEvaluate(vertices[i], OculusPoses.poseVR.RightHand.Position);
+                vertices[i].y = GaussianPointEvaluate(vertices[i], OculusPoses.poseVR.RightHand.Position, sigma);
                 //float red = vertices[i].y;
                 //float green = vertices[i].y;
                 colors[i] = Color.Lerp(Color.red, Color.green, vertices[i].y);
                 i++;
             }
+
             mesh.vertices = vertices;
             mesh.colors = colors;
             meshfilter.mesh = mesh;
