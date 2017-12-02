@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+﻿using RosSharp.RosBridgeClient;
+using UnityEngine;
 using UnityEngine.VR;
 
-public class MeshTest : MonoBehaviour {
+public class MeshHandler : MonoBehaviour {
 
     MeshFilter meshfilter;
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
+    Gaussian gaussian;
 
     float initialHandsDistance;
     bool changingSigma;
@@ -24,6 +26,8 @@ public class MeshTest : MonoBehaviour {
         MeshHelper.Subdivide(mesh, 3);
         meshfilter.mesh = mesh;
         vertices = mesh.vertices;
+
+        gaussian = new Gaussian();
 
         sigma = 1F;
         initialHandsDistance = 0;
@@ -74,7 +78,17 @@ public class MeshTest : MonoBehaviour {
         float p_z = Mathf.Pow(vertice.z - handPose.z, 2) / (2 * Mathf.Pow(sigma, 2));
         float e = Mathf.Exp(-(p_x + p_z));
         float result = handPose.y * e;
+        gaussian.a = handPose.y;
+        gaussian.x_c = handPose.x;
+        gaussian.y_c = handPose.z;
+        gaussian.sigma_x = sigma;
+        gaussian.sigma_y = sigma;
         return result;
+    }
+
+    public Gaussian GetGaussian()
+    {
+        return gaussian;
     }
 
 
