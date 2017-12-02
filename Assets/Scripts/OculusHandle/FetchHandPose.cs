@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FetchHands : PoseTransformManager {
+public class FetchHandPose : PoseTransformManager {
     public enum Hand
     {
         left,

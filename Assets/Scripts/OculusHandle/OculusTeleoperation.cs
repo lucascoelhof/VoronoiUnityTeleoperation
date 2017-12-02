@@ -15,7 +15,7 @@ public class OculusTeleoperation : MonoBehaviour {
     
     //MQTT mMqtt = new MQTT();
 
-    private int frameHash = 0;
+    //private int frameHash = 0;
     //private int mFrameRefresh = 0;
     
     // Use this for initialization

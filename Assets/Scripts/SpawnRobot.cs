@@ -5,7 +5,6 @@ using UnityEngine;
 public class SpawnRobot : MonoBehaviour {
 
     GameObject epuck;
-    float x = 0;
 
     public Vector3 Position;
     public Quaternion Orientation;

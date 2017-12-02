@@ -8,7 +8,6 @@ public class TestLocation : MonoBehaviour {
     public float distanceFromEye = .4f;
     public bool showInFrontOfLeftEye = true;
     Transform smallSphere;
-    private Camera cam;
 
     //OculusPoses oculusPoses = new OculusPoses();
     //OculusPoses.PoseVR oculusPoses;
@@ -16,7 +15,6 @@ public class TestLocation : MonoBehaviour {
     void Start()
     {
         //oculusPoses = gameObject.AddComponent(typeof(OculusPoses)) as OculusPoses;
-        cam = Camera.main;
         smallSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere).transform;
         smallSphere.localScale = new Vector3(distanceFromEye, distanceFromEye, distanceFromEye) / 10f;
     }
