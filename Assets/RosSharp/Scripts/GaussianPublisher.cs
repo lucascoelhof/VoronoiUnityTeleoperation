@@ -9,13 +9,13 @@ namespace RosSharp.RosBridgeClient
         public string topic = "/gaussian";
         public int UpdateTime = 1;
         private int advertizer;
-        private MeshHandler meshHandler;
+        private GaussianDeformation meshHandler;
 
         public void Start()
         {
             rosSocket = transform.GetComponent<RosConnector>().RosSocket;
             advertizer = rosSocket.Advertize(topic, "voronoi_hsi/Gaussian");
-            meshHandler = this.GetComponent<MeshHandler>();
+            meshHandler = this.GetComponent<GaussianDeformation>();
         }
 
         private void publish(Gaussian message)

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.VR;
 
-public class MeshHandler : MonoBehaviour {
+public class GaussianDeformation : MonoBehaviour {
 
     MeshFilter meshfilter;
     Mesh mesh;
@@ -21,9 +21,9 @@ public class MeshHandler : MonoBehaviour {
         meshfilter = GetComponent<MeshFilter>();
         mesh = meshfilter.mesh;
         vertices = mesh.vertices;
-        triangles = mesh.triangles;
+        //triangles = mesh.triangles;
 
-        MeshHelper.Subdivide(mesh, 3);
+        //MeshHelper.Subdivide(mesh, 3);
         meshfilter.mesh = mesh;
         vertices = mesh.vertices;
 
@@ -36,6 +36,10 @@ public class MeshHandler : MonoBehaviour {
 
     void Update()
     {
+        meshfilter = GetComponent<MeshFilter>();
+        mesh = meshfilter.mesh;
+        vertices = mesh.vertices;
+
         gameObject.GetComponent<Renderer>().enabled = false;
         OculusPoses.Update();
         if (OculusPoses.poseVR.Buttons.A.state || OculusPoses.poseVR.Buttons.RHandTrigger > 0.75)
