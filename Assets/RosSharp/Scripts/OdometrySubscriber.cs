@@ -15,7 +15,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
+// Topic is now public, allowing editing (C) Federal Univerity of Minas Gerais (Brazil), 2017
+// Author: Lucas Coelho Figueiredo(me@lucascoelho.net)
 
 using UnityEngine;
 
@@ -28,6 +29,7 @@ namespace RosSharp.RosBridgeClient
         public GameObject UrdfModel;
         private OdometryTransformManager odometryTransformManager;
         private RosSocket rosSocket;
+
         public string topic = "/odom";
         public int UpdateTime = 1;
 
@@ -48,7 +50,7 @@ namespace RosSharp.RosBridgeClient
         private static Vector3 getPosition(NavigationOdometry navigationOdometry)
         {
             return new Vector3(
-                -navigationOdometry.pose.pose.position.y,
+                navigationOdometry.pose.pose.position.y,
                 navigationOdometry.pose.pose.position.z,
                 navigationOdometry.pose.pose.position.x);
         }

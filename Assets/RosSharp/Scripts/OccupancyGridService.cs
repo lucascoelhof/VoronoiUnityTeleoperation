@@ -1,6 +1,6 @@
 ﻿/*
 © Federal Univerity of Minas Gerais (Brazil), 2017
-Author: Lucas Coelho Figueiredo (me@lucascoelho.net)
+Author: Italo Lelis (hello@italolelis.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,30 +18,39 @@ limitations under the License.
 
 using UnityEngine;
 
+
 namespace RosSharp.RosBridgeClient
 {
 
     [RequireComponent(typeof(RosConnector))]
-    public class ImageSubscriber : MonoBehaviour
+    public class OccupancyGridService : MonoBehaviour
     {
-        public GameObject Texture;
-        private ImageManager imageManager;
+        private OccupancyGridManager occupancyGridManager;
         private RosSocket rosSocket;
-        public string topic = "/image_raw";
-        public int UpdateTime = 1;
 
-        private void Start()
+        public void Start()
         {
             rosSocket = transform.GetComponent<RosConnector>().RosSocket;
-            rosSocket.Subscribe(topic, "sensor_msgs/Image", updateTexture, UpdateTime);
 
-            imageManager = Texture.GetComponent<ImageManager>();
+            occupancyGridManager = this.GetComponent<OccupancyGridManager>();
+            rosSocket.CallService("/static_map", typeof(NavigationGetMap), serviceReceiver);
+
         }
 
-        private void updateTexture(Message message)
+        public void callService(string serviceName)
         {
-            SensorImage sensorImage = (SensorImage) message;
-            imageManager.UpdateTexture(sensorImage);
+        }
+
+        public void serviceReceiver(object message)
+        {
+            NavigationGetMap getmap = (NavigationGetMap) message;
+            occupancyGridManager.updateGrid(getmap.map);
+        }
+
+        private void updatePoseStamped(Message message)
+        {
+            NavigationOccupancyGrid occupancyGrid = (NavigationOccupancyGrid)message;
+            occupancyGridManager.updateGrid(occupancyGrid);
         }
     }
 }

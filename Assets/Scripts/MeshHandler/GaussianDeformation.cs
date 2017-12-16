@@ -15,9 +15,14 @@ public class GaussianDeformation : MonoBehaviour {
     public GameObject leftHandObject;
     public GameObject rightHandObject;
 
-    [Header("Offset")]
+    [Header("Plane Offset")]
 
     public GameObject meshOffset;
+
+    [Tooltip("Difference of height between hand and graph")]
+    [Range(0f, 1.5f)]
+    public float handOffset;
+
 
     MeshFilter meshfilter;
     Mesh mesh;
@@ -81,8 +86,12 @@ public class GaussianDeformation : MonoBehaviour {
 
             int i = 0;
             while (i < vertices.Length)
-            { // - meshOffset.transform.position
-                vertices[i].y = GaussianPointEvaluate(vertices[i], rightHandObject.transform.position, sigma);
+            {
+                Vector3 relativePosition = new Vector3(0, 0, 0);
+                relativePosition.x = (rightHandObject.transform.position.x - meshOffset.transform.position.x) / this.gameObject.transform.localScale.x;
+                relativePosition.y = (rightHandObject.transform.position.y - meshOffset.transform.position.y) / this.gameObject.transform.localScale.y - handOffset;
+                relativePosition.z = (rightHandObject.transform.position.z - meshOffset.transform.position.z) / this.gameObject.transform.localScale.z;
+                vertices[i].y = GaussianPointEvaluate(vertices[i], relativePosition, sigma);
                 i++;
             }
 
