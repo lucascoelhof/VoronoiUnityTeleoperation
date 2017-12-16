@@ -17,5 +17,6 @@ This setup is ideal to teleoperate robots from distance or simulate reactive swa
 ## External Dependencies
 
 * [Oculus SDK for Unity](https://developer.oculus.com/) by Facebook
-* [M2MQTT](https://m2mqtt.wordpress.com/) by Eclipse Paho
 * [ROS-Sharp](https://github.com/siemens/ros-sharp) by Siemens
+* [VR Toolkit (VRTK)](https://vrtoolkit.readme.io/) by The Stonefox
+* [M2MQTT](https://m2mqtt.wordpress.com/) by Eclipse Paho

@@ -84,7 +84,6 @@ namespace RosSharp
             Vector3 pose = new Vector3(width*resolution - j * resolution - resolution / 2, 0, i * resolution + resolution / 2);
             cubes[i, j] = Instantiate(Resources.Load("OccCube"), pose, Quaternion.Euler(0, 0, 0)) as GameObject;
             cubes[i, j].transform.localScale = new Vector3(resolution, 1, resolution);
-            //cubes[i, j].transform.parent = parent.transform;
             cubes[i, j].transform.SetParent(parentGrid.transform, false);
         }
 
