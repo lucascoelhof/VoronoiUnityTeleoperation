@@ -87,6 +87,22 @@ namespace RosSharp
             cubes[i, j].transform.SetParent(parentGrid.transform, false);
         }
 
+        public void removeCube(float x, float y)
+        {
+            int i = (int)Math.Floor(x / resolution);
+            int j = (int)Math.Floor(x / resolution);
+            occupancyGrid[i, j] = 0;
+            removeCube(i, j);
+        }
+
+        public void createCube(float x, float y)
+        {
+            int i = (int)Math.Floor(x / resolution);
+            int j = (int)Math.Floor(x / resolution);
+            occupancyGrid[i, j] = 100;
+            //createCube(i, j, resolution);
+        }
+
         private void updateCubes()
         {
             for (int i = 0; i < height; i++)

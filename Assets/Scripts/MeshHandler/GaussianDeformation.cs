@@ -64,7 +64,7 @@ public class GaussianDeformation : MonoBehaviour {
 
         gameObject.GetComponent<Renderer>().enabled = false;
 
-        if(controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress)
+         if(controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress)
             || controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
         {
             gameObject.GetComponent<Renderer>().enabled = true;
