@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿ using UnityEngine;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -31,7 +31,8 @@ namespace RosSharp.RosBridgeClient
 
         public void Update()
         {
-            this.publish(meshHandler.GetGaussian());
+            if(meshHandler.GetGaussian().a > 0) 
+                this.publish(meshHandler.GetGaussian());
         }
     }
 }

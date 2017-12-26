@@ -104,15 +104,15 @@ public class GaussianDeformation : MonoBehaviour {
 
     float GaussianPointEvaluate(Vector3 vertice, Vector3 handPose, float sigma=1F)
     {
-        OVRInput.Update();
+        //OVRInput.Update();
         //handPose = InputTracking.GetLocalPosition(VRNode.RightHand);
         float p_x = Mathf.Pow(vertice.x - handPose.x, 2) / (2 * Mathf.Pow(sigma, 2));
         float p_z = Mathf.Pow(vertice.z - handPose.z, 2) / (2 * Mathf.Pow(sigma, 2));
         float e = Mathf.Exp(-(p_x + p_z));
         float result = handPose.y * e;
-        gaussian.a = handPose.y;
-        gaussian.x_c = handPose.x;
-        gaussian.y_c = handPose.z;
+        gaussian.a = (handPose.y * 100);
+        gaussian.x_c = 2 * (5 + handPose.z);
+        gaussian.y_c = 2 * (5 + handPose.x);
         gaussian.sigma_x = sigma;
         gaussian.sigma_y = sigma;
         return result;

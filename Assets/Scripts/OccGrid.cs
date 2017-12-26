@@ -21,12 +21,14 @@ public class OccGrid : MonoBehaviour {
     public GameObject rightHandObject;
 
     private float resolution;
+    Vector3 resolutionScale;
     private OccupancyGridManager occupancyGridManager;
     Vector3 placeToDeploy;
 
 	private void Start () {
         occupancyGridManager = this.GetComponent<OccupancyGridManager>();
         resolution = 0.5f;
+        resolutionScale = new Vector3(resolution,1f,resolution);
         placeToDeploy = new Vector3(0,0,0);
 	}
 	
@@ -35,11 +37,12 @@ public class OccGrid : MonoBehaviour {
         placeToDeploy.y = 0;
         placeToDeploy.z = ((int)Math.Floor(rightHandObject.transform.position.z / resolution))* resolution + resolution / 2;  //rightHandObject.transform.position.z;//(int)(rightHandObject.transform.position.y/resolution);
 
+        ghostCube.transform.localScale = resolutionScale;
         ghostCube.transform.position = placeToDeploy;
 
         occupancyGridManager.createCube(rightHandObject.transform.position.x, rightHandObject.transform.position.z);
 
-            //if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress))
-            //    occupancyGridManager.createCube(placeToDeploy.x, placeToDeploy.z);
+        if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TriggerClick))
+            occupancyGridManager.createCube(placeToDeploy.x, placeToDeploy.z);
     }
 }
