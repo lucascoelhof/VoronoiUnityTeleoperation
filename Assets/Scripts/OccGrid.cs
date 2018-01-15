@@ -23,10 +23,14 @@ public class OccGrid : MonoBehaviour {
     private float resolution;
     Vector3 resolutionScale;
     private OccupancyGridManager occupancyGridManager;
+    private OccupancyGridPublisher occGridPublisher;
     Vector3 placeToDeploy;
+
+    Boolean lastButtonStatus = false;
 
 	private void Start () {
         occupancyGridManager = this.GetComponent<OccupancyGridManager>();
+        occGridPublisher = this.GetComponent<OccupancyGridPublisher>();
         resolution = 0.25f;
         resolutionScale = new Vector3(resolution,1.025f,resolution);
         placeToDeploy = new Vector3(0,0,0);
@@ -46,7 +50,17 @@ public class OccGrid : MonoBehaviour {
         //occupancyGridManager.createCube(rightHandObject.transform.position.x, rightHandObject.transform.position.z);
 
         //if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TriggerClick))
-        if(controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
+
+        bool buttonStatus = controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress);
+
+        if (buttonStatus && buttonStatus != lastButtonStatus)
+        {
             occupancyGridManager.generateNewCube(mapPositionI, mapPositionJ);
+            NavigationOccupancyGrid occGrid = occupancyGridManager.getOccupancyGrid();
+            occGridPublisher.publish(occGrid);
+        }
+        lastButtonStatus = buttonStatus;
+
+
     }
 }

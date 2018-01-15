@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using UnityEngine;
+using UnityScript.Lang;
 
 namespace RosSharp
 {
@@ -18,9 +19,6 @@ namespace RosSharp
         float resolution;
         GameObject[,] cubes;
         GameObject parentGrid;
-
-        public bool justoncebitch = true;
-        public bool hasdata = false;
 
         int cubesRendered = 0;
 
@@ -42,7 +40,6 @@ namespace RosSharp
                 cubes = new GameObject[height, width];
             resolution = message.info.resolution;
             occupancyGrid = ConvertMatrix(message.data, message.info.height, message.info.width);
-            hasdata = true;
         }
 
         static sbyte[,] ConvertMatrix(sbyte[] flat, uint m, uint n)
@@ -55,6 +52,20 @@ namespace RosSharp
             // BlockCopy uses byte lengths: a double is 8 bytes
             Buffer.BlockCopy(flat, 0, ret, 0, flat.Length * sizeof(sbyte));
             return ret;
+        }
+
+        static sbyte[] ConvertVector(sbyte[,] matrix, uint rows, uint cols)
+        {
+            var array1d = new sbyte[rows * cols];
+            var current = 0;
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    array1d[current++] = matrix[i, j];
+                }
+            }
+            return array1d;
         }
 
         private static Vector3 getPosition(GeometryPose geometryPose)
@@ -136,6 +147,16 @@ namespace RosSharp
                     }
                 }
             }
+        }
+
+        public NavigationOccupancyGrid getOccupancyGrid()
+        {
+            NavigationOccupancyGrid occGrid = new NavigationOccupancyGrid();
+            occGrid.info.height = this.height;
+            occGrid.info.width = this.width;
+            occGrid.info.resolution = this.resolution;
+            occGrid.data = ConvertVector(this.occupancyGrid, this.height, this.width);
+            return occGrid;
         }
 
 
