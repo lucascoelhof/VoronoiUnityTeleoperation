@@ -64,8 +64,8 @@ public class GaussianDeformation : MonoBehaviour {
 
         gameObject.GetComponent<Renderer>().enabled = false;
 
-         if(controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress)
-            || controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
+         if(controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
+            //|| controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
         {
             gameObject.GetComponent<Renderer>().enabled = true;
             if (changingSigma)
@@ -76,8 +76,8 @@ public class GaussianDeformation : MonoBehaviour {
                 if (sigma < 0) sigma = 0;
                 changingSigma = false;
             }
-            if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress)
-            || controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
+            if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
+            //|| controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
             {
                 Vector3 distanceHands = rightHandObject.transform.position - leftHandObject.transform.position;
                 initialHandsDistance = Mathf.Sqrt(Mathf.Pow(distanceHands.x, 2) + Mathf.Pow(distanceHands.z, 2));

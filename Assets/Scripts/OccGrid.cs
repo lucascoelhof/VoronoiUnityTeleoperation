@@ -27,8 +27,8 @@ public class OccGrid : MonoBehaviour {
 
 	private void Start () {
         occupancyGridManager = this.GetComponent<OccupancyGridManager>();
-        resolution = 0.5f;
-        resolutionScale = new Vector3(resolution,1f,resolution);
+        resolution = 0.25f;
+        resolutionScale = new Vector3(resolution,1.025f,resolution);
         placeToDeploy = new Vector3(0,0,0);
 	}
 	
@@ -37,12 +37,16 @@ public class OccGrid : MonoBehaviour {
         placeToDeploy.y = 0;
         placeToDeploy.z = ((int)Math.Floor(rightHandObject.transform.position.z / resolution))* resolution + resolution / 2;  //rightHandObject.transform.position.z;//(int)(rightHandObject.transform.position.y/resolution);
 
+        int mapPositionI = (int)Math.Floor(rightHandObject.transform.position.x / resolution)+1;
+        int mapPositionJ = (int)Math.Floor(rightHandObject.transform.position.z / resolution);
+
         ghostCube.transform.localScale = resolutionScale;
         ghostCube.transform.position = placeToDeploy;
 
-        occupancyGridManager.createCube(rightHandObject.transform.position.x, rightHandObject.transform.position.z);
+        //occupancyGridManager.createCube(rightHandObject.transform.position.x, rightHandObject.transform.position.z);
 
-        if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TriggerClick))
-            occupancyGridManager.createCube(placeToDeploy.x, placeToDeploy.z);
+        //if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TriggerClick))
+        if(controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
+            occupancyGridManager.generateNewCube(mapPositionI, mapPositionJ);
     }
 }

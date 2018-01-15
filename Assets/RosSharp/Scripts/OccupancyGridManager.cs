@@ -81,6 +81,7 @@ namespace RosSharp
         }
         private void createCube(int i, int j, float resolution)
         {
+            if (cubes[i, j] != null) return;
             Vector3 pose = new Vector3(j * resolution + resolution / 2, 0, i * resolution + resolution / 2);
             cubes[i, j] = Instantiate(Resources.Load("OccCube"), pose, Quaternion.Euler(0, 0, 0)) as GameObject;
             cubes[i, j].transform.localScale = new Vector3(resolution, 1, resolution);
@@ -99,8 +100,24 @@ namespace RosSharp
         {
             int i = (int)Math.Floor(x / resolution);
             int j = (int)Math.Floor(x / resolution);
+
+            if (i < 0 || i>height || j < 0 || j > width) return;
+
+            i = (int)height - i;
+
             occupancyGrid[i, j] = 100;
-            //createCube(i, j, resolution);
+            createCube(i, j, resolution);
+        }
+
+        public void generateNewCube(int i, int j)
+        {
+            if (i < 0 || i > height || j < 0 || j > width) return;
+
+            i = (int)height - i;
+
+            occupancyGrid[i, j] = 100;
+            //Debug.Log("New obstacle in " + i + "x" + j);
+            createCube(i, j, resolution);
         }
 
         private void updateCubes()
