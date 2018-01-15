@@ -3986,6 +3986,7 @@ GameObject:
   - component: {fileID: 1470536153}
   - component: {fileID: 1470536152}
   - component: {fileID: 1470536156}
+  - component: {fileID: 1470536157}
   m_Layer: 0
   m_Name: OccupancyGrid
   m_TagString: Untagged
@@ -4027,8 +4028,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db86932c658c9564d838ed9e134ebc5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  justoncebitch: 1
-  hasdata: 0
 --- !u!4 &1470536155
 Transform:
   m_ObjectHideFlags: 0
@@ -4058,6 +4057,20 @@ MonoBehaviour:
   controllerRight: {fileID: 2126643161}
   leftHandObject: {fileID: 140069096}
   rightHandObject: {fileID: 826956934}
+--- !u!114 &1470536157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1470536151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66adf033b2efd7c4489b347b07522d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topic: /voronoi/map
+  UnityGameObject: {fileID: 1019222747679528, guid: 8389df6a4a578f14c8555d1ea8c17e31,
+    type: 2}
 --- !u!1 &1492031779
 GameObject:
   m_ObjectHideFlags: 0
