@@ -47,6 +47,7 @@ namespace RosSharp
             if (recreateTexture)
             {
                 imageTexture = new Texture2D(width, heigth, encoding, false);
+                imageTexture.filterMode = FilterMode.Point;
                 imageTexture.LoadRawTextureData(data);
             }
             if (doUpdate)

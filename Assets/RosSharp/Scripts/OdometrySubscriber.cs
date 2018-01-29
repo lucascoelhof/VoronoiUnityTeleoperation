@@ -50,9 +50,9 @@ namespace RosSharp.RosBridgeClient
         private static Vector3 getPosition(NavigationOdometry navigationOdometry)
         {
             return new Vector3(
-                navigationOdometry.pose.pose.position.y,
+                navigationOdometry.pose.pose.position.x,
                 navigationOdometry.pose.pose.position.z,
-                navigationOdometry.pose.pose.position.x);
+                navigationOdometry.pose.pose.position.y);
         }
 
         private static Quaternion getRotation(NavigationOdometry navigationOdometry)
