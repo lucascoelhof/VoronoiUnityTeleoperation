@@ -26,41 +26,71 @@ public class OccGrid : MonoBehaviour {
     private OccupancyGridPublisher occGridPublisher;
     Vector3 placeToDeploy;
 
-    Boolean lastButtonStatus = false;
+    private int mapPositionI;
+    private int mapPositionJ;
 
-	private void Start () {
+    enum GridModify { Add, Remove };
+    private GridModify lastCommand;
+    private int lastPositionI = -1;
+    private int lastPositionJ = -1;
+
+    private void Start () {
         occupancyGridManager = this.GetComponent<OccupancyGridManager>();
         occGridPublisher = this.GetComponent<OccupancyGridPublisher>();
         resolution = 0.25f;
         resolutionScale = new Vector3(resolution,1.025f,resolution);
         placeToDeploy = new Vector3(0,0,0);
 	}
-	
-	private void Update () {
-        placeToDeploy.x = ((int)Math.Floor(rightHandObject.transform.position.x / resolution))* resolution + resolution / 2; //(int)(rightHandObject.transform.position.x/resolution);
-        placeToDeploy.y = 0;
-        placeToDeploy.z = ((int)Math.Floor(rightHandObject.transform.position.z / resolution))* resolution + resolution / 2;  //rightHandObject.transform.position.z;//(int)(rightHandObject.transform.position.y/resolution);
 
-        int mapPositionI = (int)Math.Floor(rightHandObject.transform.position.x / resolution)+1;
-        int mapPositionJ = (int)Math.Floor(rightHandObject.transform.position.z / resolution);
+    private void Update() {
 
-        ghostCube.transform.localScale = resolutionScale;
-        ghostCube.transform.position = placeToDeploy;
+        ghostCube.GetComponent<Renderer>().enabled = false;
+        
 
-        //occupancyGridManager.createCube(rightHandObject.transform.position.x, rightHandObject.transform.position.z);
+        // Enter 'edit grid' mode if user lean A or B button
+        if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOneTouch) ||
+            controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoTouch))
+        {
+            resolution = occupancyGridManager.resolution;
+            placeToDeploy.x = ((int)Math.Floor(rightHandObject.transform.position.x / resolution)) * resolution + resolution / 2; //(int)(rightHandObject.transform.position.x/resolution);
+            placeToDeploy.y = 0;
+            placeToDeploy.z = ((int)Math.Floor(rightHandObject.transform.position.z / resolution)) * resolution + resolution / 2;  //rightHandObject.transform.position.z;//(int)(rightHandObject.transform.position.y/resolution);
 
-        //if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TriggerClick))
+            mapPositionI = (int)Math.Floor(rightHandObject.transform.position.z / resolution);
+            mapPositionJ = (int)Math.Floor(rightHandObject.transform.position.x / resolution);
 
-        bool buttonStatus = controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress);
+            ghostCube.transform.localScale = resolutionScale;
+            ghostCube.transform.position = placeToDeploy;
+            ghostCube.GetComponent<Renderer>().enabled = true;
+        }
 
-        if (buttonStatus && buttonStatus != lastButtonStatus)
+        // In case the user press both buttons, the function doesn't enter in a loop
+        if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress) &&
+            controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress))
+            return;
+
+        if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress) &&
+            ( !(lastPositionI == mapPositionI && lastPositionJ == mapPositionJ) ||
+              lastCommand == GridModify.Remove) )
         {
             occupancyGridManager.generateNewCube(mapPositionI, mapPositionJ);
             NavigationOccupancyGrid occGrid = occupancyGridManager.getOccupancyGrid();
             occGridPublisher.publish(occGrid);
+            lastPositionI = mapPositionI;
+            lastPositionJ = mapPositionJ;
+            lastCommand = GridModify.Add;
         }
-        lastButtonStatus = buttonStatus;
 
-
+        if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress) &&
+            ( !(lastPositionI == mapPositionI && lastPositionJ == mapPositionJ) ||
+              lastCommand == GridModify.Add) )
+        {
+            occupancyGridManager.wipeOldCube(mapPositionI, mapPositionJ);
+            NavigationOccupancyGrid occGrid = occupancyGridManager.getOccupancyGrid();
+            occGridPublisher.publish(occGrid);
+            lastPositionI = mapPositionI;
+            lastPositionJ = mapPositionJ;
+            lastCommand = GridModify.Remove;
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace RosSharp
         private Quaternion origin_rotation;
         uint width;
         uint height;
-        float resolution;
+        public float resolution;
         GameObject[,] cubes;
         GameObject parentGrid;
 
@@ -124,11 +124,19 @@ namespace RosSharp
         {
             if (i < 0 || i > height || j < 0 || j > width) return;
 
-            i = (int)height - i;
+            //i = (int)height - i;
 
             occupancyGrid[i, j] = 100;
             //Debug.Log("New obstacle in " + i + "x" + j);
             createCube(i, j, resolution);
+        }
+
+        public void wipeOldCube(int i, int j)
+        {
+            if (i < 0 || i > height || j < 0 || j > width) return;
+
+            occupancyGrid[i, j] = 0;
+            removeCube(i,j);
         }
 
         private void updateCubes()
