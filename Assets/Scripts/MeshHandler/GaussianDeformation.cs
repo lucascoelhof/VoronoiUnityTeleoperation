@@ -1,4 +1,5 @@
 ﻿using RosSharp.RosBridgeClient;
+using System;
 using UnityEngine;
 using UnityEngine.VR;
 using VRTK;
@@ -64,7 +65,10 @@ public class GaussianDeformation : MonoBehaviour {
 
         gameObject.GetComponent<Renderer>().enabled = false;
 
-         if(controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
+        if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TouchpadPress))
+            gameObject.GetComponent<Renderer>().enabled = true;
+
+        if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
             //|| controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
         {
             gameObject.GetComponent<Renderer>().enabled = true;
@@ -89,7 +93,7 @@ public class GaussianDeformation : MonoBehaviour {
             {
                 Vector3 relativePosition = new Vector3(0, 0, 0);
                 relativePosition.x = (rightHandObject.transform.position.x - meshOffset.transform.position.x) / this.gameObject.transform.localScale.x;
-                relativePosition.y = (rightHandObject.transform.position.y - meshOffset.transform.position.y) / this.gameObject.transform.localScale.y - handOffset;
+                relativePosition.y = Math.Min(10, rightHandObject.transform.position.y - meshOffset.transform.position.y) / this.gameObject.transform.localScale.y - handOffset;
                 relativePosition.z = (rightHandObject.transform.position.z - meshOffset.transform.position.z) / this.gameObject.transform.localScale.z;
                 vertices[i].y = GaussianPointEvaluate(vertices[i], relativePosition, sigma);
                 i++;
