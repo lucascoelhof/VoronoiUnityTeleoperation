@@ -29,10 +29,19 @@ namespace RosSharp.RosBridgeClient
             advertizer = rosSocket.Advertize(topic, "voronoi_hsi/Gaussian");
         }
 
-        public void Update()
+        public void sendGaussian()
         {
             if(meshHandler.GetGaussian().a > 0) 
                 this.publish(meshHandler.GetGaussian());
+        }
+
+        public void Update()
+        {
+            if(meshHandler.updateGaussian == GaussianDeformation.UpdateState.ToUpdate)
+            {
+                sendGaussian();
+                meshHandler.updateGaussian = GaussianDeformation.UpdateState.Updated;
+            }
         }
     }
 }

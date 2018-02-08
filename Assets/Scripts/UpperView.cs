@@ -12,7 +12,9 @@ public class UpperView : MonoBehaviour {
     [Range(12f, 20f)]
     public float altitude = 18f;
     [Range(0.8f, 1.8f)]
-    private float speed = 1.6f;
+    public float speed = 1.6f;
+    [Range(0.8f, 4f)]
+    public float maximumSpeed = 2f;
 
     //private float minSpeed = 0.08f;
     private float defaultHeight;
@@ -36,9 +38,8 @@ public class UpperView : MonoBehaviour {
             if (vision.transform.position.y < maxHeight)
             {
                 double relativePosition = maxHeight - vision.transform.position.y;
-                float relativeSpeed = Math.Min(4f, Math.Max(speed/1000, (speed * (float)Math.Pow(relativePosition/8, 2))));
+                float relativeSpeed = Math.Min(maximumSpeed, Math.Max(speed/1000, (speed * (float)Math.Pow(relativePosition/8, 2))));
                 vision.transform.position = new Vector3(vision.transform.position.x, vision.transform.position.y + relativeSpeed, vision.transform.position.z);
-                Debug.Log(relativeSpeed);
                 returnToOriginalHeight = true;
             }
         }
@@ -48,7 +49,7 @@ public class UpperView : MonoBehaviour {
             if(vision.transform.position.y > defaultHeight)
             {
                 double relativePosition = vision.transform.position.y - defaultHeight + 0.32;
-                float relativeSpeed = Math.Min(4f, Math.Max(speed/100, (speed * (float)Math.Pow(relativePosition/5, 2))));
+                float relativeSpeed = Math.Min(maximumSpeed, Math.Max(speed/100, (speed * (float)Math.Pow(relativePosition/5, 2))));
                 vision.transform.position = new Vector3(vision.transform.position.x, vision.transform.position.y - relativeSpeed, vision.transform.position.z);
             }
 

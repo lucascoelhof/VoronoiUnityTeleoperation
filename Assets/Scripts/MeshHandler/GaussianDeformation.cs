@@ -32,7 +32,10 @@ public class GaussianDeformation : MonoBehaviour {
     Gaussian gaussian;
 
     float initialHandsDistance;
-    bool changingSigma;
+    private bool changingSigma;
+
+    public enum UpdateState { Reading, Updated, ToUpdate };
+    public UpdateState updateGaussian = UpdateState.Updated;
 
     private float sigma;
     
@@ -65,13 +68,14 @@ public class GaussianDeformation : MonoBehaviour {
 
         gameObject.GetComponent<Renderer>().enabled = false;
 
-        if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TouchpadPress))
+        if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TriggerClick))
             gameObject.GetComponent<Renderer>().enabled = true;
 
         if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
-            //|| controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
+        //|| controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
         {
             gameObject.GetComponent<Renderer>().enabled = true;
+            updateGaussian = UpdateState.Reading;
             if (changingSigma)
             {
                 Vector3 distanceHands = rightHandObject.transform.position - leftHandObject.transform.position;
@@ -80,7 +84,7 @@ public class GaussianDeformation : MonoBehaviour {
                 if (sigma < 0) sigma = 0;
                 changingSigma = false;
             }
-            if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
+            if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
             //|| controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
             {
                 Vector3 distanceHands = rightHandObject.transform.position - leftHandObject.transform.position;
@@ -102,6 +106,9 @@ public class GaussianDeformation : MonoBehaviour {
             mesh.vertices = vertices;
             meshfilter.mesh = mesh;
         }
+
+        else if (updateGaussian == UpdateState.Reading)
+            updateGaussian = UpdateState.ToUpdate;
 
     }
 
