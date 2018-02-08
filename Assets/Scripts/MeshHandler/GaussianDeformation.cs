@@ -121,9 +121,9 @@ public class GaussianDeformation : MonoBehaviour {
         float p_z = Mathf.Pow(vertice.z - handPose.z, 2) / (2 * Mathf.Pow(sigma, 2));
         float e = Mathf.Exp(-(p_x + p_z));
         float result = handPose.y * e;
-        gaussian.a = (handPose.y * 100);
-        gaussian.x_c = 2 * (5 + handPose.z);
-        gaussian.y_c = 2 * (5 + handPose.x);
+        gaussian.a = (handPose.y * 10);
+        gaussian.x_c = this.transform.position.x + this.transform.localScale.x * handPose.x;
+        gaussian.y_c = this.transform.position.z + this.transform.localScale.z * handPose.z;
         gaussian.sigma_x = sigma;
         gaussian.sigma_y = sigma;
         return result;
