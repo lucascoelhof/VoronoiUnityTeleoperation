@@ -44,7 +44,6 @@ namespace RosSharp.RosBridgeClient
             //StandardFloat64 float64_msg = (StandardFloat64)message;
             //data = float64_msg.data;
             StandardString msg = (StandardString) message;
-            Debug.Log("received data: " + msg.data.ToString());
             data = Convert.ToDouble(msg.data);
         }
 

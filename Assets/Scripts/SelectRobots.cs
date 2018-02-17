@@ -22,6 +22,8 @@ public class SelectRobots : MonoBehaviour {
 
     public GameObject circleSelector;
 
+    public GameObject weightBar;
+
     //=========//
 
     private List<GameObject> robots;
@@ -35,11 +37,15 @@ public class SelectRobots : MonoBehaviour {
     private Material materialSelected;
     private Material materialDefault;
 
+    public ChangeRobotWeight changeRobotWeight;
+
     // Use this for initialization
     void Start () {
 
         materialDefault = Resources.Load("Materials/Robot", typeof(Material)) as Material;
         materialSelected = Resources.Load("Materials/SelectedRobot", typeof(Material)) as Material;
+
+        //changeRobotWeight = new ChangeRobotWeight();
 
         robots = new List<GameObject>();
         selectedRobots = new List<GameObject>();
@@ -114,5 +120,21 @@ public class SelectRobots : MonoBehaviour {
 
             updateSelection = LastState.off;
         }
-	}
+
+        else
+        {
+            foreach(GameObject robot in selectedRobots)
+            {
+                Debug.Log(robot.name);
+            }
+            //if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
+            //{
+            //    weightBar.transform.localScale -= new Vector3(0.2f, 0, 0);
+            //}
+            //if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress))
+            //{
+            //    weightBar.transform.localScale += new Vector3(0.2f, 0, 0);
+            //}
+        }
+    }
 }

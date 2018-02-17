@@ -24,7 +24,6 @@ public class Circle : MonoBehaviour
     void CreatePoints()
     {
         float x;
-        float y;
         float z;
 
         float angle = 20f;

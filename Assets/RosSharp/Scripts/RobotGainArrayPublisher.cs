@@ -16,7 +16,7 @@ namespace RosSharp.RosBridgeClient
             advertizer = rosSocket.Advertize(topic, "voronoi_hsi/RobotGainArray");
         }
 
-        private void publish(List<VoronoiRobotGain> robot_list)
+        public void publish(List<VoronoiRobotGain> robot_list)
         {
             VoronoiRobotGainArray robotGainArray = new VoronoiRobotGainArray();
             robotGainArray.robot_gain_list = new VoronoiRobotGain[robot_list.Count];
