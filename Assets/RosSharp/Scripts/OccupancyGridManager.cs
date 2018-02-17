@@ -166,8 +166,6 @@ namespace RosSharp
             occGrid.data = ConvertVector(this.occupancyGrid, this.height, this.width);
             return occGrid;
         }
-
-
     }
 
 }

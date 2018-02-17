@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 
-public class AdjustRobotWeight : MonoBehaviour {
+public class SelectRobots : MonoBehaviour {
 
     public bool changeRobotColorDinamically = false;
 

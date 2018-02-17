@@ -1,6 +1,6 @@
 ﻿/*
 © Federal Univerity of Minas Gerais (Brazil), 2017
-Author: Italo Lelis (hello@italolelis.com)
+Author: Lucas Coelho Figueiredo (me@lucascoelho.net)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 
 
+using System;
 using UnityEngine;
 
 
@@ -23,25 +24,33 @@ namespace RosSharp.RosBridgeClient
 {
 
     [RequireComponent(typeof(RosConnector))]
-    public class OccupancyGridService : MonoBehaviour
+    public class FloatSubscriber : MonoBehaviour
     {
-        private OccupancyGridManager occupancyGridManager;
         private RosSocket rosSocket;
-        public string service_name = "/static_map";
+        public string topic = "";
+        public int UpdateTime = 1;
+        private double data;
 
         public void Start()
         {
             rosSocket = transform.GetComponent<RosConnector>().RosSocket;
-
-            occupancyGridManager = this.GetComponent<OccupancyGridManager>();
-            rosSocket.CallService(service_name, typeof(NavigationGetMap), serviceReceiver);
+            rosSocket.Subscribe(topic, "std_msgs/String", updateFloat, UpdateTime);
+            Debug.Log("Subscribing to: " + topic);
 
         }
 
-        public void serviceReceiver(object message)
+        private void updateFloat(Message message)
         {
-            NavigationGetMap getmap = (NavigationGetMap) message;
-            occupancyGridManager.updateGrid(getmap.map);
+            //StandardFloat64 float64_msg = (StandardFloat64)message;
+            //data = float64_msg.data;
+            StandardString msg = (StandardString) message;
+            Debug.Log("received data: " + msg.data.ToString());
+            data = Convert.ToDouble(msg.data);
+        }
+
+        public double getData()
+        {
+            return data;
         }
     }
 }

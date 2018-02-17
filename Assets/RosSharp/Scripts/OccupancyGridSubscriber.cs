@@ -23,25 +23,24 @@ namespace RosSharp.RosBridgeClient
 {
 
     [RequireComponent(typeof(RosConnector))]
-    public class OccupancyGridService : MonoBehaviour
+    public class OccupancyGridSubscriber : MonoBehaviour
     {
         private OccupancyGridManager occupancyGridManager;
         private RosSocket rosSocket;
-        public string service_name = "/static_map";
+        public string topic = "/map";
+        public int UpdateTime = 1;
 
         public void Start()
         {
             rosSocket = transform.GetComponent<RosConnector>().RosSocket;
-
             occupancyGridManager = this.GetComponent<OccupancyGridManager>();
-            rosSocket.CallService(service_name, typeof(NavigationGetMap), serviceReceiver);
-
+            rosSocket.Subscribe(topic, "nav_msgs/OccupancyGrid", updateOccupancyGrid, UpdateTime);
         }
 
-        public void serviceReceiver(object message)
+        private void updateOccupancyGrid(Message message)
         {
-            NavigationGetMap getmap = (NavigationGetMap) message;
-            occupancyGridManager.updateGrid(getmap.map);
+            NavigationOccupancyGrid occupancyGrid = (NavigationOccupancyGrid)message;
+            occupancyGridManager.updateGrid(occupancyGrid);
         }
     }
 }
