@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using RosSharp.RosBridgeClient;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
@@ -23,6 +25,9 @@ public class SelectRobots : MonoBehaviour {
     public GameObject circleSelector;
 
     public GameObject weightBar;
+    public GameObject weightText;
+
+    private RobotGainArrayPublisher robotGainPublisher;
 
     //=========//
 
@@ -37,7 +42,7 @@ public class SelectRobots : MonoBehaviour {
     private Material materialSelected;
     private Material materialDefault;
 
-    public ChangeRobotWeight changeRobotWeight;
+    double weight = 1;
 
     // Use this for initialization
     void Start () {
@@ -45,16 +50,16 @@ public class SelectRobots : MonoBehaviour {
         materialDefault = Resources.Load("Materials/Robot", typeof(Material)) as Material;
         materialSelected = Resources.Load("Materials/SelectedRobot", typeof(Material)) as Material;
 
-        //changeRobotWeight = new ChangeRobotWeight();
-
         robots = new List<GameObject>();
         selectedRobots = new List<GameObject>();
+        robotGainPublisher = this.GetComponent<RobotGainArrayPublisher>();
 
         foreach (Transform child in parentGameObject.transform)
         {
             robots.Add(child.gameObject);
         }
-
+        weightBar.GetComponent<Renderer>().enabled = false;
+        weightText.GetComponent<Renderer>().enabled = false;
     }
 
     void selectRobots ()
@@ -88,6 +93,9 @@ public class SelectRobots : MonoBehaviour {
         {
             circleSelector.GetComponent<Renderer>().enabled = true;
 
+            weightBar.GetComponent<Renderer>().enabled = false;
+            weightText.GetComponent<Renderer>().enabled = false;
+
             if (updateSelection == LastState.off)
             {
                 initalPosition = rightHandObject.transform.position;
@@ -119,22 +127,54 @@ public class SelectRobots : MonoBehaviour {
             selectRobots();
 
             updateSelection = LastState.off;
+
+            weightBar.GetComponent<Renderer>().enabled = false;
+            weightText.GetComponent<Renderer>().enabled = false;
+            //weightBar.transform.localScale = new Vector3(1, weightBar.transform.localScale.y, weightBar.transform.localScale.z);
+            //eightText.GetComponent<TextMesh>().text = weightBar.transform.localScale.x.ToString();
+
+            VoronoiRobotGainArray gainArray = new VoronoiRobotGainArray();
+            gainArray.robot_gain_list = new VoronoiRobotGain[selectedRobots.Count];
+            gainArray.size = selectedRobots.Count;
+            int i = 0;
+            foreach (GameObject robot in selectedRobots)
+            {
+                VoronoiRobotGain gain = new VoronoiRobotGain();
+                gain.kp = this.weight;
+                Debug.Log(robot.name);
+                gain.id = Int32.Parse(robot.name.Split('_')[1]);
+                gainArray.robot_gain_list[i] = gain;
+                i++;
+            }
+            robotGainPublisher.publish(gainArray);
+            Debug.Log("published");
         }
 
-        else
+        if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress) || controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress))
         {
-            foreach(GameObject robot in selectedRobots)
+            weightBar.GetComponent<Renderer>().enabled = true;
+            weightText.GetComponent<Renderer>().enabled = true;
+
+            if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
             {
-                Debug.Log(robot.name);
+                weightBar.transform.localScale -= new Vector3(0.2322f, 0, 0);
+                weightText.GetComponent<TextMesh>().text = weightBar.transform.localScale.x.ToString();
             }
-            //if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
-            //{
-            //    weightBar.transform.localScale -= new Vector3(0.2f, 0, 0);
-            //}
-            //if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress))
-            //{
-            //    weightBar.transform.localScale += new Vector3(0.2f, 0, 0);
-            //}
+            else if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress))
+            {
+                weightBar.transform.localScale += new Vector3(0.2322f, 0, 0);
+                weightText.GetComponent<TextMesh>().text = weightBar.transform.localScale.x.ToString();
+            }
+            else if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOneTouch) ||
+                controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoTouch))
+            {
+
+            }
+            else
+            {
+                
+            }
+            weight = weightBar.transform.localScale.x;
         }
     }
 }

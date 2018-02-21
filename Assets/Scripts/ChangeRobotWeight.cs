@@ -25,7 +25,7 @@ public class ChangeRobotWeight : MonoBehaviour {
 
     void publish(List<VoronoiRobotGain> list_gain)
     {
-        gainPublisher.publish(list_gain);
+        //gainPublisher.publish(list_gain);
     }
 
 
