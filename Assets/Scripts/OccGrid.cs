@@ -20,6 +20,8 @@ public class OccGrid : MonoBehaviour {
     public GameObject leftHandObject;
     public GameObject rightHandObject;
 
+    public GameObject controllerHelper;
+
     private float resolution;
     Vector3 resolutionScale;
     private OccupancyGridManager occupancyGridManager;
@@ -34,6 +36,9 @@ public class OccGrid : MonoBehaviour {
     private int lastPositionI = -1;
     private int lastPositionJ = -1;
 
+    private enum UpdateState { Reading, Updated, ToUpdate };
+    private UpdateState updateGrid = UpdateState.Updated;
+
     private void Start () {
         occupancyGridManager = this.GetComponent<OccupancyGridManager>();
         occGridPublisher = this.GetComponent<OccupancyGridPublisher>();
@@ -45,7 +50,6 @@ public class OccGrid : MonoBehaviour {
     private void Update() {
 
         ghostCube.GetComponent<Renderer>().enabled = false;
-        
 
         // Enter 'edit grid' mode if user lean A or B button
         if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOneTouch) ||
@@ -62,6 +66,11 @@ public class OccGrid : MonoBehaviour {
             ghostCube.transform.localScale = resolutionScale;
             ghostCube.transform.position = placeToDeploy;
             ghostCube.GetComponent<Renderer>().enabled = true;
+            controllerHelper.SetActive(true);
+        }
+        else
+        {
+            controllerHelper.SetActive(false);
         }
 
         // In case the user press both buttons, the function doesn't enter in a loop
@@ -74,11 +83,10 @@ public class OccGrid : MonoBehaviour {
               lastCommand == GridModify.Remove) )
         {
             occupancyGridManager.generateNewCube(mapPositionI, mapPositionJ);
-            NavigationOccupancyGrid occGrid = occupancyGridManager.getOccupancyGrid();
-            occGridPublisher.publish(occGrid);
             lastPositionI = mapPositionI;
             lastPositionJ = mapPositionJ;
             lastCommand = GridModify.Add;
+            updateGrid = UpdateState.ToUpdate;
         }
 
         if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress) &&
@@ -86,11 +94,19 @@ public class OccGrid : MonoBehaviour {
               lastCommand == GridModify.Add) )
         {
             occupancyGridManager.wipeOldCube(mapPositionI, mapPositionJ);
-            NavigationOccupancyGrid occGrid = occupancyGridManager.getOccupancyGrid();
-            occGridPublisher.publish(occGrid);
             lastPositionI = mapPositionI;
             lastPositionJ = mapPositionJ;
             lastCommand = GridModify.Remove;
+            updateGrid = UpdateState.ToUpdate;
+        }
+
+        if (!controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress) &&
+            !controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress) &&
+            updateGrid == UpdateState.ToUpdate)
+        {
+            NavigationOccupancyGrid occGrid = occupancyGridManager.getOccupancyGrid();
+            occGridPublisher.publish(occGrid);
+            updateGrid = UpdateState.Updated;
         }
     }
 }

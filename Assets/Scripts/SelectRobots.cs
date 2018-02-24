@@ -15,6 +15,9 @@ public class SelectRobots : MonoBehaviour {
     public GameObject leftHandObject;
     public GameObject rightHandObject;
 
+    public GameObject controllerHelperLeft;
+    public GameObject controllerHelperRight;
+
     [Tooltip("Parent GameObject which contain robots GameObjects")]
     public GameObject parentGameObject;
 
@@ -130,6 +133,8 @@ public class SelectRobots : MonoBehaviour {
 
             weightBar.GetComponent<Renderer>().enabled = false;
             weightText.GetComponent<Renderer>().enabled = false;
+            controllerHelperLeft.SetActive(false);
+            controllerHelperRight.SetActive(false);
             //weightBar.transform.localScale = new Vector3(1, weightBar.transform.localScale.y, weightBar.transform.localScale.z);
             //eightText.GetComponent<TextMesh>().text = weightBar.transform.localScale.x.ToString();
 
@@ -141,7 +146,7 @@ public class SelectRobots : MonoBehaviour {
             {
                 VoronoiRobotGain gain = new VoronoiRobotGain();
                 gain.kp = this.weight;
-                Debug.Log(robot.name);
+                //Debug.Log(robot.name);
                 gain.id = Int32.Parse(robot.name.Split('_')[1]);
                 gainArray.robot_gain_list[i] = gain;
                 i++;
@@ -154,16 +159,24 @@ public class SelectRobots : MonoBehaviour {
         {
             weightBar.GetComponent<Renderer>().enabled = true;
             weightText.GetComponent<Renderer>().enabled = true;
+            controllerHelperLeft.SetActive(true);
+            controllerHelperRight.SetActive(true);
 
             if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
             {
-                weightBar.transform.localScale -= new Vector3(0.2322f, 0, 0);
-                weightText.GetComponent<TextMesh>().text = weightBar.transform.localScale.x.ToString();
+                weightBar.transform.localScale -= new Vector3(0.0564f, 0, 0);
+                if(weightBar.transform.localScale.x < 1f)
+                    weightBar.transform.localScale = new Vector3(1f, weightBar.transform.localScale.y, weightBar.transform.localScale.z);
+                weightBar.transform.localPosition = new Vector3(weightBar.transform.localScale.x/2, weightBar.transform.localPosition.y, weightBar.transform.localPosition.z);
+                weightText.GetComponent<TextMesh>().text = "New Speed:\n► " + weightBar.transform.localScale.x.ToString("0.00");
             }
             else if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoPress))
             {
-                weightBar.transform.localScale += new Vector3(0.2322f, 0, 0);
-                weightText.GetComponent<TextMesh>().text = weightBar.transform.localScale.x.ToString();
+                weightBar.transform.localScale += new Vector3(0.0564f, 0, 0);
+                if (weightBar.transform.localScale.x > 4f)
+                    weightBar.transform.localScale = new Vector3(4f, weightBar.transform.localScale.y, weightBar.transform.localScale.z);
+                weightBar.transform.localPosition = new Vector3(weightBar.transform.localScale.x / 2, weightBar.transform.localPosition.y, weightBar.transform.localPosition.z);
+                weightText.GetComponent<TextMesh>().text = "New Speed:\n► " + weightBar.transform.localScale.x.ToString("0.00");
             }
             else if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOneTouch) ||
                 controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonTwoTouch))

@@ -11,6 +11,9 @@ public class GaussianDeformation : MonoBehaviour {
     public VRTK_ControllerEvents controllerLeft;
     public VRTK_ControllerEvents controllerRight;
 
+    public GameObject controllerHelperLeft;
+    public GameObject controllerHelperRight;
+
     [Header("Controller Object (used to get Transform)")]
 
     public GameObject leftHandObject;
@@ -68,18 +71,22 @@ public class GaussianDeformation : MonoBehaviour {
 
         gameObject.GetComponent<Renderer>().enabled = false;
 
-        if(controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TriggerClick))
+        if (controllerLeft.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TriggerClick))
+        {
             gameObject.GetComponent<Renderer>().enabled = true;
+        }
 
         if (controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripClick))
         //|| controllerRight.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.ButtonOnePress))
         {
             gameObject.GetComponent<Renderer>().enabled = true;
+            controllerHelperLeft.SetActive(true);
+            controllerHelperRight.SetActive(true);
             updateGaussian = UpdateState.Reading;
             if (changingSigma)
             {
                 Vector3 distanceHands = rightHandObject.transform.position - leftHandObject.transform.position;
-                float finalHandsDistance = Mathf.Sqrt(Mathf.Pow(distanceHands.x, 2) + Mathf.Pow(distanceHands.z, 2)) - initialHandsDistance;
+                float finalHandsDistance = 3 * (Mathf.Sqrt(Mathf.Pow(distanceHands.x, 2) + Mathf.Pow(distanceHands.z, 2)) - initialHandsDistance);
                 sigma += finalHandsDistance;
                 if (sigma < 0) sigma = 0;
                 changingSigma = false;
@@ -108,7 +115,12 @@ public class GaussianDeformation : MonoBehaviour {
         }
 
         else if (updateGaussian == UpdateState.Reading)
+        {
             updateGaussian = UpdateState.ToUpdate;
+
+            controllerHelperLeft.SetActive(false);
+            controllerHelperRight.SetActive(false);
+        }
 
     }
 

@@ -10,6 +10,9 @@ public class ShowControllerInfo : MonoBehaviour {
     public GameObject tooltipLeft;
     public GameObject tooltipRight;
 
+    public GameObject helperShow;
+    public GameObject helperHide;
+
     //private bool showInfo = false;
     private enum LastState { on, off };
     private LastState buttonState = LastState.off;
@@ -18,6 +21,8 @@ public class ShowControllerInfo : MonoBehaviour {
     void Start () {
         tooltipLeft.SetActive(false);
         tooltipRight.SetActive(false);
+        helperHide.SetActive(false);
+        helperShow.SetActive(true);
     }
 	
 	// Update is called once per frame
@@ -30,11 +35,15 @@ public class ShowControllerInfo : MonoBehaviour {
                 {
                     tooltipLeft.SetActive(false);
                     tooltipRight.SetActive(false);
+                    helperHide.SetActive(false);
+                    helperShow.SetActive(true);
                 }
                 else
                 {
                     tooltipLeft.SetActive(true);
                     tooltipRight.SetActive(true);
+                    helperShow.SetActive(false);
+                    helperHide.SetActive(true);
                 }
                 buttonState = LastState.on;
             }

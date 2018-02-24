@@ -40,6 +40,7 @@ namespace RosSharp.RosBridgeClient
         public void publish(NavigationOccupancyGrid message)
         {
             rosSocket.Publish(advertizer, message);
+            Debug.Log("Published occ grid");
         }
 
         private void setPublisher(string topic)
