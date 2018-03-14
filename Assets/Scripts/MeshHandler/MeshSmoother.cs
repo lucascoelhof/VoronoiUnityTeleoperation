@@ -9,9 +9,13 @@ public class MeshSmoother : MonoBehaviour {
     Vector3[] vertices;
     int[] triangles;
 
+    public int[] subdivision = new int[] {0,2,3,4,6,8,9,12,16,18,24};
+
     [Header("Subdive Mesh")]
 
     [Tooltip("Divide meshes in submeshes to generate more triangles and make the mesh smoother if deformed")]
+    [Range(0, 10)]
+    public int subdivisionLevel;
     [Range(0, 10)]
     public int timesToSubdivide;
 
@@ -23,7 +27,10 @@ public class MeshSmoother : MonoBehaviour {
         vertices = mesh.vertices;
         triangles = mesh.triangles;
 
-        MeshHelper.Subdivide(mesh, timesToSubdivide);
+        for (int i = 0; i < timesToSubdivide; i++)
+        {
+            MeshHelper.Subdivide(mesh, subdivision[subdivisionLevel]);
+        }
         meshfilter.mesh = mesh;
         vertices = mesh.vertices;
     }

@@ -15,14 +15,14 @@ public class ShowControllerInfo : MonoBehaviour {
 
     //private bool showInfo = false;
     private enum LastState { on, off };
-    private LastState buttonState = LastState.off;
+    private LastState buttonState = LastState.on;
 
     // Use this for initialization
     void Start () {
-        tooltipLeft.SetActive(false);
-        tooltipRight.SetActive(false);
-        helperHide.SetActive(false);
-        helperShow.SetActive(true);
+        tooltipLeft.SetActive(true);
+        tooltipRight.SetActive(true);
+        helperHide.SetActive(true);
+        helperShow.SetActive(false);
     }
 	
 	// Update is called once per frame
