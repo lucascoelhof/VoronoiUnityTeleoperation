@@ -9,7 +9,7 @@ public class MeshSmoother : MonoBehaviour {
     Vector3[] vertices;
     int[] triangles;
 
-    public int[] subdivision = new int[] {0,2,3,4,6,8,9,12,16,18,24};
+    private int[] subdivision = new int[] {0,2,3,4,6,8,9,12,16,18,24};
 
     [Header("Subdive Mesh")]
 
