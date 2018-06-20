@@ -18,13 +18,20 @@ The library [**VRTK**](https://vrtoolkit.readme.io/) was used to aid on the deve
 
 In this environment, users can freely walk around, change the density distribution function, create obstacles and increase the weight of selected robots. The coverage algorithm can react to any changes imposed by the human agent.
 
+The environment on Unity was tested connecting to the [Voronoi Tesselation Algorithm](https://bitbucket.org/robovr/voronoi_hsi) on ROS.
+
+---
+
 These are the available user functions:
 
 | Left Hand | Right Hand |
 | -- | -- |
 | ![Left Hand](README/left_hand_controller.jpg) | ![Right Hand](README/right_hand_controller.jpg) |
 
-The environment on Unity was tested connecting to the [Voronoi Tesselation Algorithm](https://bitbucket.org/robovr/voronoi_hsi) on ROS.
+- **Overview:** show an upper vision of the map
+- **Speed:** change the robot weight on the Voronoi Diagram
+- **Density:** change position and height of the gaussian shaped density function
+- **Grid:** add/remove obstacles on the map
 
 ## References
 
