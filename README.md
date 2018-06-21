@@ -33,8 +33,13 @@ These are the available user functions:
 - **Density:** change position and height of the gaussian shaped density function
 - **Grid:** add/remove obstacles on the map
 
+## License
+
+This project is distibuted under the [BSD 3-Clause License](LICENSE).
+
 ## References
 
-* [Oculus SDK for Unity](https://developer.oculus.com/) by Facebook
-* [ROS-Sharp](https://github.com/siemens/ros-sharp) by Siemens
-* [VR Toolkit (VRTK)](https://vrtoolkit.readme.io/) by The Stonefox
+* [Oculus SDK for Unity](https://developer.oculus.com/)
+* [ROS-Sharp](https://github.com/siemens/ros-sharp)
+* [VR Toolkit (VRTK)](https://vrtoolkit.readme.io/)
+* [ROS Bridge](http://wiki.ros.org/rosbridge_suite)
