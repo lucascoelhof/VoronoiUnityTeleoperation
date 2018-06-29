@@ -1,4 +1,4 @@
-# Unity Robot Teleoperation
+# Voronoi Unity Teleoperation
 
 A Virtual Reality environment using **Unity3D** for **Human Swarm Interaction** with **ROS**.
 
@@ -18,7 +18,7 @@ The library [**VRTK**](https://vrtoolkit.readme.io/) was used to aid on the deve
 
 In this environment, users can freely walk around, change the density distribution function, create obstacles and increase the weight of selected robots. The coverage algorithm can react to any changes imposed by the human agent.
 
-The environment on Unity was tested connecting to the [Voronoi Tesselation Algorithm](https://bitbucket.org/robovr/voronoi_hsi) on ROS.
+The environment on Unity was tested connecting to the [Voronoi Tesselation Algorithm](https://github.com/lucascoelhof/voronoi_hsi) on ROS.
 
 ---
 
@@ -29,13 +29,14 @@ These are the available user functions:
 | ![Left Hand](README/left_hand_controller.jpg) | ![Right Hand](README/right_hand_controller.jpg) |
 
 - **Overview:** show an upper vision of the map
+- **Teleport:** teleport on the map using a raycast
 - **Speed:** change the robot weight on the Voronoi Diagram
 - **Density:** change position and height of the gaussian shaped density function
 - **Grid:** add/remove obstacles on the map
 
 ## License
 
-This project is distibuted under the [BSD 3-Clause License](LICENSE).
+This project is distibuted under the [Apache License 2.0](LICENSE).
 
 ## References
 
