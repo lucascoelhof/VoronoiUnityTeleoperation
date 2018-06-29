@@ -2,7 +2,7 @@
 
 A Virtual Reality environment using **Unity3D** for **Human Swarm Interaction** with **ROS**.
 
-![Example of the upper map and user interaction](README/teleoperation-example.jpg)
+[![Example of the upper map and user interaction](README/teleoperation-example.jpg)](https://www.youtube.com/watch?v=tMZiT0ObciI)
 
 This setup is ideal to teleoperate robots from distance or simulate reactive swarm algorithms. The user can interact with the robot swarm and shape the environment map.
 
